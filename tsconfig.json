@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",                         // Kompiliert auf ESNext
+    "module": "ESNext",                         // Modultyp für die Ausgabe
+    "moduleResolution": "node",                 // Modulsauflösung auf Node.js
+    "esModuleInterop": true,                    // Ermöglicht die Interoperabilität zwischen CommonJS und ES-Modulen
+    "skipLibCheck": true,                       // Überspringt die Überprüfung von Bibliotheksdateien
+    "forceConsistentCasingInFileNames": true,   // Erzwingt eine konsistente Groß-/Kleinschreibung von Dateinamen
+    "strict": true,                             // Aktiviert alle strikten TypeScript-Prüfungen
+    "noImplicitAny": false,                     // Verhindert nicht explizites Any, wenn es nicht erwünscht ist
+    "jsx": "react-jsx",                         // JSX mit React 17+ (keine Notwendigkeit für `React`-Importe)
+    "types": ["node", "react", "react-dom", "redux", "react-redux"],                          // Schließt Typdefinitionen für Node.js ein
+    "baseUrl": ".",                             // Basisverzeichnis für Relativimporte
+    "paths": {
+      "@/*": ["src/*"]                          // Ermöglicht Aliase für Imports (z. B. @/ für den `src`-Ordner)
+    }
+  },
+  "include": [
+    "src/**/*"                                  // Alle Dateien im src-Ordner einbeziehen
+  ],
+  "exclude": [
+    "node_modules",                             // Schließt den node_modules-Ordner aus
+    "dist"                                      // Schließt den dist-Ordner aus
+  ]
+}

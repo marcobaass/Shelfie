@@ -1,0 +1,34 @@
+.searchContainer {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  justify-content: center;
+}
+
+.suggestionBox {
+  position: relative;
+}
+
+.suggestions {
+  display: grid;
+  justify-items: center;
+  position: absolute;
+  background-color: lightcyan;
+  margin: 0;
+  padding: 0;
+  grid-row: 1;
+}
+
+.suggestions > li {
+  list-style: none;
+  margin: 0.25em;
+  cursor: pointer;
+}
+
+.suggestions > li:hover {
+  background-color: cyan;
+}
+
+.suggestions > li:not(:last-child) {
+  border-bottom: 1px grey solid;
+  width: 100%;
+}

@@ -10,14 +10,16 @@ interface Book {
 interface BooksState {
   books: Book[];
   suggestions: { title: string; authors: string }[];
-  loading: boolean;
+  booksLoading: boolean;
+  suggestionsLoading: boolean;
   error: string | null;
 }
 
 const initialState: BooksState = {
   books: [],
   suggestions: [],
-  loading: false,
+  booksLoading: false,
+  suggestionsLoading: false,
   error: null,
 };
 
@@ -32,19 +34,19 @@ const booksSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchBooksThunk.pending, (state) => {
-        state.loading = true;
+        state.booksLoading = true;
         state.error = null;
       })
       .addCase(fetchBooksThunk.fulfilled, (state, action) => {
         state.books = action.payload.docs;
-        state.loading = false;
+        state.booksLoading = false;
       })
       .addCase(fetchBooksThunk.rejected, (state, action) => {
-        state.loading = false;
+        state.booksLoading = false;
         state.error = action.payload as string;
       })
       .addCase(fetchSuggestionsThunk.pending, (state) => {
-        state.loading = true;
+        state.suggestionsLoading = true;
         state.error = null;
       })
       .addCase(fetchSuggestionsThunk.fulfilled, (state, action) => {
@@ -52,9 +54,12 @@ const booksSlice = createSlice({
           title: book.title,
           authors: book.author_name ? book.author_name.join(', ') : 'Unknown Author'
         }));
+        state.suggestionsLoading = false;
       })
       .addCase(fetchSuggestionsThunk.rejected, (state, action) => {
         state.error = action.payload as string;
+        state.suggestionsLoading = false;
+
       })
   },
 });

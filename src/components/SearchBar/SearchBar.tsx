@@ -4,7 +4,8 @@ import { RootState } from '../../redux/store';
 import { useDispatch } from 'react-redux';
 import { fetchSuggestionsThunk } from '../../redux/books/booksThunks';
 import { AppDispatch } from '../../redux/store';
-import styles from './SearchBar.module.css'
+import styles from './SearchBar.module.css';
+import searchGif from "../../assets/search.gif";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -15,6 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
   const [query, setQuery] = useState('');
   const suggestions = useSelector((state: RootState) => state.books.suggestions);
+  const isSuggestionsLoading = useSelector((state: RootState) => state.books.suggestionsLoading);
   console.log(suggestions)
   const [showSuggestions, setShowSuggestions] = useState(true)
   const dispatch = useDispatch<AppDispatch>();
@@ -39,7 +41,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
   return (
     <div className={styles.searchContainer}>
-      <div className="searchField">
+      <div className={styles.searchField}>
         <input
           type="text"
           value={query}
@@ -48,9 +50,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
           onFocus={() => setShowSuggestions(true)}
           placeholder='Search for books or authors'
-        />
-        <button onClick={handleUIRequest}>Search</button>
+          />
+        {isSuggestionsLoading && (
+          <div className={styles.searchGif}>
+            <img src={searchGif} alt="" />
+          </div>
+        )}
       </div>
+      <button onClick={handleUIRequest}>Search</button>
 
       <div className="suggestionBox">
         <ul className={styles.suggestions}>

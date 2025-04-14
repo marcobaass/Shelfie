@@ -1,22 +1,46 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import booksReducer from '../redux/books/booksSlice';
-import { describe, it, expect, vi } from 'vitest';
+// Import the module containing the thunk
+import * as booksThunks from '../redux/books/booksThunks';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// --- Mock Setup ---
+// Mock the entire module. Vitest replaces exports with vi.fn() automatically.
+vi.mock('../redux/books/booksThunks');
+// --- End Mock Setup ---
+
+// Import the component AFTER the mock is defined.
 import SearchPage from '../components/SearchPage/SearchPage';
 
 describe('SearchPage Component', () => {
-  it('should dispatch fetchBooksThunk when search is triggered', async () => {
 
+  beforeEach(() => {
+    // Reset all mocks (including the auto-mocks created by vi.mock)
+    vi.clearAllMocks();
+  });
+
+  it('should call fetchBooksThunk action creator with the correct query when search is triggered', async () => {
+    // Arrange
+    const user = userEvent.setup();
     const store = configureStore({
       reducer: {
         books: booksReducer,
       },
     });
 
-    const dispatchSpy = vi.spyOn(store, 'dispatch');
+    // **Get a typed reference to the auto-mocked function**
+    const mockedFetchBooksThunk = vi.mocked(booksThunks.fetchBooksThunk);
 
+    mockedFetchBooksThunk.mockReturnValue(
+      // Properly type the thunk return value
+      (() => Promise.resolve()) as unknown as ReturnType<typeof booksThunks.fetchBooksThunk>
+    );
+
+    // Now render the component, which will use the configured mock
     render(
       <Provider store={store}>
         <SearchPage />
@@ -24,15 +48,21 @@ describe('SearchPage Component', () => {
     );
 
     const input = screen.getByPlaceholderText('Search for books or authors');
-    const button = screen.getByText('Search');
+    const button = screen.getByRole('button', { name: /search/i });
+    const searchTerm = 'React';
 
-    fireEvent.change(input, { target: { value:'React' } });
-    fireEvent.click(button);
+    // Act
+    await user.type(input, searchTerm);
+    await user.click(button);
 
-    await waitFor(() => {
-      expect(dispatchSpy).toHaveBeenCalled();
-
-      expect(dispatchSpy).toHaveBeenCalledWith(expect.any(Function));
-    });
+    // Assert
+    // Assertions remain the same, targeting the mocked function reference
+    expect(mockedFetchBooksThunk).toHaveBeenCalledTimes(1);
+    expect(mockedFetchBooksThunk).toHaveBeenCalledWith(searchTerm);
   });
 });
+
+
+
+
+//

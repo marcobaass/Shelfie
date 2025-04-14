@@ -3,6 +3,7 @@ import SearchBar from '../SearchBar/SearchBar'
 import { useDispatch } from 'react-redux'
 import { fetchBooksThunk } from '../../redux/books/booksThunks';
 import { AppDispatch } from '@/redux/store';
+import SearchResults from '../SearchResults/SearchResults';
 
 const SearchPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -17,7 +18,7 @@ const SearchPage: React.FC = () => {
       <SearchBar
         onSearch = {handleSearchDispatch}
       />
-      /* Show the results */
+      <SearchResults />
     </div>
   );
 };

@@ -1,18 +1,22 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchBooksThunk, fetchSuggestionsThunk  } from './booksThunks';
 
-interface Book {
+export interface Book {
   id: string;
   title: string;
   author_name: string[];
+  cover?: number;
+  year?: number;
+  synopsis?: string;
 }
 
-interface BooksState {
+export interface BooksState {
   books: Book[];
-  suggestions: { title: string; authors: string }[];
+  suggestions: Book[];
   booksLoading: boolean;
   suggestionsLoading: boolean;
   error: string | null;
+  selectedSuggestion: Book | null;
 }
 
 const initialState: BooksState = {
@@ -21,15 +25,20 @@ const initialState: BooksState = {
   booksLoading: false,
   suggestionsLoading: false,
   error: null,
+  selectedSuggestion: null,
 };
 
 const booksSlice = createSlice({
   name: 'books',
   initialState,
   reducers: {
-    setSuggestions(state, action: PayloadAction<{ title: string; authors: string }[]>) {
+    setSuggestions(state, action: PayloadAction<Book[]>) {
       state.suggestions = action.payload;
     },
+    setSelectedSuggestion(state, action: PayloadAction<Book | null>) {
+      console.log("Dispatching setSelectedSuggestion with:", action.payload);
+      state.selectedSuggestion = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -50,10 +59,8 @@ const booksSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchSuggestionsThunk.fulfilled, (state, action) => {
-        state.suggestions = action.payload.docs.map((book: Book) => ({
-          title: book.title,
-          authors: book.author_name ? book.author_name.join(', ') : 'Unknown Author'
-        }));
+        console.log("Suggestions Payload:", action.payload);
+        state.suggestions = action.payload.docs;
         state.suggestionsLoading = false;
       })
       .addCase(fetchSuggestionsThunk.rejected, (state, action) => {
@@ -64,5 +71,5 @@ const booksSlice = createSlice({
   },
 });
 
-export const { setSuggestions } = booksSlice.actions;
+export const { setSuggestions, setSelectedSuggestion } = booksSlice.actions;
 export default booksSlice.reducer;

@@ -6,7 +6,8 @@ import { fetchSuggestionsThunk } from '../../redux/books/booksThunks';
 import { AppDispatch } from '../../redux/store';
 import styles from './SearchBar.module.css';
 import searchGif from "../../assets/search.gif";
-import { setSelectedSuggestion, Book } from '../../redux/books/booksSlice'
+import { setSelectedSuggestion } from '../../redux/books/suggestionsSlice';
+import { Book } from '@/redux/books/bookTypes';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
@@ -17,8 +18,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
-  const suggestions = useSelector((state: RootState) => state.books.suggestions);
-  const isSuggestionsLoading = useSelector((state: RootState) => state.books.suggestionsLoading);
+  const suggestions = useSelector((state: RootState) => state.suggestions.suggestions);
+  const isSuggestionsLoading = useSelector((state: RootState) => state.suggestions.suggestionsLoading);
   console.log(suggestions)
   const [showSuggestions, setShowSuggestions] = useState(true)
   const dispatch = useDispatch<AppDispatch>();
@@ -72,6 +73,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
           onFocus={() => setShowSuggestions(true)}
           placeholder='Search for books or authors'
+          onSubmit={handleUIRequest}
           />
         {isSuggestionsLoading && (
           <div className={styles.searchGif}>

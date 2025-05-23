@@ -1,112 +1,128 @@
-// src/tests/booksThunks.test.ts
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import store from '../redux/store';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { configureStore } from '@reduxjs/toolkit'; // PayloadAction importieren
+import searchReducer from '../redux/books/searchSlice';
+import suggestionsReducer, { SuggestionsState } from '../redux/books/suggestionsSlice'; // SuggestionsState für Store-Typ
 import { fetchBooksThunk, fetchSuggestionsThunk } from '../redux/books/booksThunks';
-import { fetchBooks, fetchSuggestions } from '../API/api';
+import * as api from '../API/api';
+import { RawApiDoc, Book } from '../redux/books/bookTypes';
+import { mapRawDocToBook } from '../../src/utils/bookUtils'; // Pfad anpassen!
 
-type VitestMock = ReturnType<typeof vi.fn>;
+// VitestMock Typ nicht mehr benötigt
 
-// Mock the API module so both functions can be controlled in tests.
-vi.mock('../API/api', () => ({
-  fetchBooks: vi.fn(),
-  fetchSuggestions: vi.fn(),
-}));
+vi.mock('../API/api');
+
+const mockedFetchBooks = vi.mocked(api.fetchBooks);
+const mockedFetchSuggestions = vi.mocked(api.fetchSuggestions);
 
 describe('fetchBooksThunk', () => {
+  // Typ für den Store expliziter machen, falls nötig, aber oft nicht erforderlich
+  let store: ReturnType<typeof configureStore<{search: ReturnType<typeof searchReducer>}>>;
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-    vi.resetModules();
-  })
+  beforeEach(() => {
+    store = configureStore({
+      reducer: {
+        search: searchReducer,
+      },
+    });
+    vi.clearAllMocks();
+  });
 
-  it('dispatches fulfilled action when API call is successful', async () => {
-    const mockBooks = [
-      { id: '1', title: 'Book 1', author_name: ['Author 1'] },
-      { id: '2', title: 'Book 2', author_name: ['Author 2'] }
+  it('dispatches fulfilled action with transformed data when API call is successful', async () => {
+    const mockRawDocsData: RawApiDoc[] = [
+      { key: '/works/OL123W', title: 'Raw Book 1', author_name: ['Author A'], first_publish_year: 2020, cover_i: 101 },
+      { key: '/works/OL456W', title: 'Raw Book 2', author_name: ['Author B'], first_publish_year: 2021, cover_i: 102 },
     ];
-    (fetchBooks as unknown as VitestMock).mockResolvedValue({ docs: mockBooks });
+    const mockNumFound = mockRawDocsData.length;
 
+    mockedFetchBooks.mockResolvedValue({ docs: mockRawDocsData, numFound: mockNumFound });
+
+    const expectedTransformedBooks: Book[] = mockRawDocsData
+      .map(doc => mapRawDocToBook(doc))
+      .filter((book): book is Book => book !== null);
+
+    // Das Ergebnis von await store.dispatch(thunk) IST die Action
     const action = await store.dispatch(fetchBooksThunk('react'));
 
-    expect(action.type).toBe('books/fetchBooks/fulfilled');
-    expect(action.payload).toEqual({ docs: mockBooks });
+    expect(action.type).toBe('search/fetchBooks/fulfilled');
+    expect(mockedFetchBooks).toHaveBeenCalledWith('react');
+
+    // Type Guard, um TypeScript zu helfen, den Payload zu erkennen
+    if (fetchBooksThunk.fulfilled.match(action)) {
+      expect(action.payload).toEqual({
+        docs: expectedTransformedBooks,
+        numFound: mockNumFound,
+      });
+    } else {
+      // Sollte nicht passieren, wenn der Typ 'search/fetchBooks/fulfilled' ist
+      throw new Error('Action was not fulfilled for fetchBooksThunk');
+    }
   });
 
   it('dispatches rejected action when API call fails', async () => {
     const errorMessage = 'Network error';
-    (fetchBooks as unknown as VitestMock).mockRejectedValue(new Error(errorMessage));
+    mockedFetchBooks.mockRejectedValue(new Error(errorMessage));
 
     const action = await store.dispatch(fetchBooksThunk('react'));
-    expect(action.type).toBe('books/fetchBooks/rejected');
-    expect(action.payload).toEqual(expect.any(String));
+    expect(action.type).toBe('search/fetchBooks/rejected');
+
+    // Type Guard für rejected action
+    if (fetchBooksThunk.rejected.match(action)) {
+      expect(action.payload).toBe(errorMessage);
+      // Optional: auch action.error prüfen, wenn es für den Test relevant ist
+      // expect(action.error.message).toBe(errorMessage);
+    } else {
+      throw new Error('Action was not rejected for fetchBooksThunk');
+    }
   });
 });
 
 describe('fetchSuggestionsThunk', () => {
+  let store: ReturnType<typeof configureStore<{suggestions: SuggestionsState}>>;
 
-  afterEach(() => {
-    vi.resetAllMocks();
-    vi.resetModules();
-  })
-
-  it('dispatches fulfilled action when API call is successful', async () => {
-    // Mock data with simple key properties that match what the test expects
-    const mockData = [
-      {
-        key: "1", // Simple key format for the test
-        title: "Book 1",
-        author_name: ["Author 1"],
-        cover_i: 111,
-        first_publish_year: 1990,
-        synopsis: "No synopsis available"
+  beforeEach(() => {
+    store = configureStore({
+      reducer: {
+        suggestions: suggestionsReducer,
       },
-      {
-        key: "2", // Simple key format for the test
-        title: "Book 2",
-        author_name: ["Author 2"],
-        cover_i: 222,
-        first_publish_year: 2000,
-        synopsis: "No synopsis available"
-      }
+    });
+    vi.clearAllMocks();
+  });
+
+  it('dispatches fulfilled action with transformed data when API call is successful', async () => {
+    const mockRawApiSuggestionsData: RawApiDoc[] = [
+      { key: "sugg1", title: "Suggestion 1", author_name: ["Author S1"], cover_i: 707, first_publish_year: 1999 },
+      { key: "sugg2", title: "Suggestion 2", author_name: ["Author S2"] }
     ];
 
-    // Mock the API response
-    (fetchSuggestions as unknown as VitestMock).mockResolvedValue(mockData);
+    mockedFetchSuggestions.mockResolvedValue(mockRawApiSuggestionsData);
 
-    // Dispatch the thunk
+    const expectedMappedSuggestions: Book[] = mockRawApiSuggestionsData
+      .map(doc => mapRawDocToBook(doc))
+      .filter((book): book is Book => book !== null);
+
     const action = await store.dispatch(fetchSuggestionsThunk('test query'));
 
-    // Define expected data after mapping - should match exactly what the test expects
-    const expectedMappedSuggestions = [
-      {
-        id: "1",
-        title: "Book 1",
-        author_name: ["Author 1"],
-        cover: 111,
-        year: 1990,
-        synopsis: "No synopsis available"
-      },
-      {
-        id: "2",
-        title: "Book 2",
-        author_name: ["Author 2"],
-        cover: 222,
-        year: 2000,
-        synopsis: "No synopsis available"
-      }
-    ];
+    expect(action.type).toBe('suggestions/fetchSuggestions/fulfilled');
 
-    // Assert that the action has the correct type and payload
-    expect(action.type).toBe('books/fetchSuggestions/fulfilled');
-    expect(action.payload).toEqual({ docs: expectedMappedSuggestions });
+    if (fetchSuggestionsThunk.fulfilled.match(action)) {
+      expect(action.payload).toEqual({ docs: expectedMappedSuggestions });
+    } else {
+      throw new Error('Action was not fulfilled for fetchSuggestionsThunk');
+    }
+    expect(mockedFetchSuggestions).toHaveBeenCalledWith('test query');
   });
 
   it('dispatches rejected action when API call fails', async () => {
     const errorMessage = 'Network error';
-    (fetchSuggestions as unknown as VitestMock).mockRejectedValue(new Error(errorMessage));
+    mockedFetchSuggestions.mockRejectedValue(new Error(errorMessage));
 
     const action = await store.dispatch(fetchSuggestionsThunk('react'));
-    expect(action.type).toBe('books/fetchSuggestions/rejected');
-    expect(action.payload).toEqual(expect.any(String));
+    expect(action.type).toBe('suggestions/fetchSuggestions/rejected');
+
+    if (fetchSuggestionsThunk.rejected.match(action)) {
+      expect(action.payload).toBe(errorMessage);
+    } else {
+      throw new Error('Action was not rejected for fetchSuggestionsThunk');
+    }
   });
 });

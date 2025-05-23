@@ -1,21 +1,20 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchBooks, fetchSuggestions } from '../../API/api';
-
-interface Book {
-  id: string;
-  title: string;
-  author_name: string[];
-  cover?: number;
-  year?: number;
-  synopsis?: string;
-}
+import { Book, RawApiDoc } from './bookTypes';
+import { mapRawDocToBook } from '../../utils/bookUtils'
 
 interface FetchBooksResponse {
   docs: Book[];
+  numFound: number;
 }
 
 interface FetchSuggestionsResponse {
   docs: Book[]
+}
+
+interface RawBooksApiResponse {
+  docs: RawApiDoc[];
+  numFound: number;
 }
 
 export const fetchBooksThunk = createAsyncThunk<
@@ -23,15 +22,35 @@ export const fetchBooksThunk = createAsyncThunk<
   string,
   { rejectValue: string}
   >(
-  'books/fetchBooks',
+  'search/fetchBooks',
   async (query, { rejectWithValue }) => {
     try {
-      const data = await fetchBooks(query);
-      return { docs: data.docs };
+      // 1. Fetch RAW data from API
+      const rawData: RawBooksApiResponse = await fetchBooks(query);
+
+      // 2. Validate RAW data structure
+      if (!rawData || !Array.isArray(rawData.docs) || typeof rawData.numFound !== 'number') {
+        console.error("Unexpected API response structure in fetchBooksThunk:", rawData);
+        return rejectWithValue('Invalid API response format');
+      }
+
+      // 3. Transform RAW docs using the helper function
+      const transformedDocs: Book[] = rawData.docs
+        .map(mapRawDocToBook) // Use the imported helper for each item
+        .filter((book): book is Book => book !== null); // Filter out invalid items
+
+      // 4. Return the final payload with TRANSFORMED docs
+      return {
+        docs: transformedDocs,    // This is now Book[]
+        numFound: rawData.numFound
+      };
+
     } catch (error: unknown) {
       if (error instanceof Error) {
+        console.error("Error fetching/transforming books:", error);
         return rejectWithValue(error.message);
       }
+      console.error("Unknown error fetching/transforming books:", error);
       return rejectWithValue('An unknown error occurred');
     }
   }
@@ -42,54 +61,32 @@ export const fetchSuggestionsThunk = createAsyncThunk<
   string,
   { rejectValue: string }
 >(
-  "books/fetchSuggestions",
+  "suggestions/fetchSuggestions",
   async (query, { rejectWithValue }) => {
     try {
-      const docs = await fetchSuggestions(query);
-      console.log("API Raw Response1:", docs);
+      const rawDocs: RawApiDoc[] = await fetchSuggestions(query);
 
-      console.log("Whats going on?")
-
-      if (Array.isArray(docs) && docs.length > 0) {
-        const mappedDocs = docs.map((book) => {
-          // Log book properties for debugging
-          console.log("Book Object:", book);
-          console.log("Book Keys:", Object.keys(book));
-          console.log("Key Property:", book.key);
-
-          // Safely extract the ID - handle multiple formats
-          let id;
-          if (typeof book.key === 'string') {
-            // Handle format like "/works/1" by extracting just the "1"
-            if (book.key.includes('/')) {
-              id = book.key.split('/').pop();
-            } else {
-              // If it's already a simple string like "1", use it directly
-              id = book.key;
-            }
-          }
-
-          const mappedBook = {
-            id: id,  // Use the extracted ID
-            title: book.title,
-            author_name: book.author_name || ["Unknown Author"],
-            cover: book.cover_i,
-            year: book.first_publish_year,
-            synopsis: book.synopsis || "No synopsis available",
-          };
-
-          console.log("Mapped Book:", mappedBook);
-          return mappedBook;
-        });
-
-        return { docs: mappedDocs };
-      } else {
-        return { docs: [] };
+      if (!Array.isArray(rawDocs)) { // <<< Changed validation here
+        // Log the actual received data for debugging
+        console.error("Unexpected API response structure in fetchSuggestionsThunk (expected array):", rawDocs);
+        return rejectWithValue('Invalid API response format for suggestions (expected array)');
       }
+
+      // Transform RAW docs using the helper function
+      const transformedDocs: Book[] = rawDocs
+      .map(mapRawDocToBook) // Use the imported helper for each item
+      .filter((book): book is Book => book !== null); // Filter out invalid items
+
+      return {
+        docs: transformedDocs // This is now Book[]
+      };
+
     } catch (error: unknown) {
       if (error instanceof Error) {
+        console.error("Error fetching/transforming suggestions:", error);
         return rejectWithValue(error.message);
       }
+      console.error("Unknown error fetching/transforming suggestions:", error);
       return rejectWithValue("An unknown error occurred");
     }
   }

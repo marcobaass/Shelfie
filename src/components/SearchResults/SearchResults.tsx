@@ -1,9 +1,9 @@
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store'
+import { Book } from '@/redux/books/bookTypes';
 
 export default function SearchResults() {
-  const selectedSuggestion = useSelector((state: RootState) => state.books.selectedSuggestion)
+  const selectedSuggestion = useSelector((state: RootState): Book | null => state.suggestions.selectedSuggestion)
   console.log("Redux State - selectedSuggestion:", selectedSuggestion);
 
   const imgLink = selectedSuggestion?.cover
@@ -24,9 +24,10 @@ export default function SearchResults() {
               key={selectedSuggestion.cover}
               src={`https://covers.openlibrary.org/b/id/${selectedSuggestion.cover}-M.jpg`}
               alt={`${selectedSuggestion.title} cover`}
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
           )}
-          <p>{ selectedSuggestion.synopsis }</p>
+          {selectedSuggestion.synopsis && <p>{ selectedSuggestion.synopsis }</p> }
         </div>
       ) : (
         <p>Keine Auswahl</p>

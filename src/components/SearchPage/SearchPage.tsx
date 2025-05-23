@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import { fetchBooksThunk } from '../../redux/books/booksThunks';
 import { AppDispatch } from '@/redux/store';
 import SearchResults from '../SearchResults/SearchResults';
+import BookList from '../BookList/BookList';
 
 const SearchPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -19,6 +20,7 @@ const SearchPage: React.FC = () => {
         onSearch = {handleSearchDispatch}
       />
       <SearchResults />
+      <BookList />
     </div>
   );
 };

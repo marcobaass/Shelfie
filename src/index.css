@@ -1,3 +1,13 @@
+@font-face {
+  font-family: 'Geist';
+  src: url('../src/assets/fonts/Geist/Geist-VariableFont_wght.ttf');
+}
+
+@font-face {
+  font-family: 'Great Vibes';
+  src: url('../src/assets/fonts/Great_Vibes/GreatVibes-Regular.ttf');
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -11,6 +21,29 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Colors */
+  --clr-dark: #3B3E2D;
+  --clr-medium: #5C6837;
+  --clr-light: #F5F6F1;
+
+  --font: 'Geist';
+  --font-accent: 'Great Vibes';
+
+  --fs-nav: clamp(1.5rem, 1.2391rem + 1.3043vw, 2.25rem);
+  --fs-nav-s: clamp(1.125rem, 0.9293rem + 0.9783vw, 1.6875rem);
+  --fs-nav-accent: clamp(1.75rem, 1.4457rem + 1.5217vw, 2.625rem);
+
+  /* Gaps */
+  --gap-3xs: clamp(0.375rem, 0.3098rem + 0.3261vw, 0.5625rem);
+  --gap-2xs: clamp(0.75rem, 0.6196rem + 0.6522vw, 1.125rem);
+  --gap-xs: clamp(1.125rem, 0.9293rem + 0.9783vw, 1.6875rem);
+  --gap-s: clamp(1.5rem, 1.2391rem + 1.3043vw, 2.25rem);
+  --gap-m: clamp(2.25rem, 1.8587rem + 1.9565vw, 3.375rem);
+  --gap-l: clamp(3rem, 2.4783rem + 2.6087vw, 4.5rem);
+  --gap-xl: clamp(4.5rem, 3.7174rem + 3.913vw, 6.75rem);
+  --gap-2xl: clamp(6rem, 4.9565rem + 5.2174vw, 9rem);
+  --gap-3xl: clamp(9rem, 7.4348rem + 7.8261vw, 13.5rem);
 }
 
 a {
@@ -24,10 +57,11 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  min-height: 100svh;
+  background-color: var(--clr-light);
+
 }
 
 h1 {

@@ -1,0 +1,36 @@
+nav {
+  display: flex;
+  max-width: 1240px;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--clr-dark);
+}
+
+.menu {
+  gap: var(--gap-m);
+  align-items: center;
+  margin-right: var(--gap-s);
+  border-bottom: none;
+}
+
+a {
+  font-family: var(--font);
+  font-size: var(--fs-nav-s);
+  color: var(--clr-dark);
+  line-height: 2;
+}
+
+.navLogo {
+  font-size: var(--fs-nav);
+  margin-left: var(--gap-s);
+}
+
+.serif {
+  font-family: var(--font-accent);
+  font-size: var(--fs-nav-accent);
+  margin-right: 0.2rem;
+}
+
+.navIcon {
+  fill: black;
+  
+}

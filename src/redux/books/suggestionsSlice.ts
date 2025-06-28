@@ -7,6 +7,7 @@ export interface SuggestionsState {
   suggestionsLoading: boolean;
   error: string | null;
   selectedSuggestion: Book | null;
+  showSuggestions: boolean;
 }
 
 const initialState: SuggestionsState = {
@@ -14,18 +15,23 @@ const initialState: SuggestionsState = {
   suggestionsLoading: false,
   error: null,
   selectedSuggestion: null,
+  showSuggestions: false,
 };
 
 const suggestionsSlice = createSlice({
   name: 'suggestions',
   initialState,
   reducers: {
+    setShowSuggestions: (state, action:  PayloadAction<boolean>) => {
+      state.showSuggestions = action.payload;
+    },
     setSuggestions(state, action: PayloadAction<Book[]>) {
       state.suggestions = action.payload;
     },
     setSelectedSuggestion(state, action: PayloadAction<Book | null>) {
       state.selectedSuggestion = action.payload;
-    }
+    },
+    clearSuggestions: (state) => {state.suggestions = []}
   },
   extraReducers: (builder) => {
     builder
@@ -46,5 +52,5 @@ const suggestionsSlice = createSlice({
   },
 });
 
-export const { setSuggestions, setSelectedSuggestion } = suggestionsSlice.actions;
+export const { setSuggestions, setSelectedSuggestion, setShowSuggestions, clearSuggestions } = suggestionsSlice.actions;
 export default suggestionsSlice.reducer;

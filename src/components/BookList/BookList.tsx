@@ -1,29 +1,25 @@
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store'
-import styles from './BookList.module.css'
+import { RootState } from '../../redux/store';
+import styles from './BookList.module.css';
+import { Book } from '@/redux/books/bookTypes'
 
-export default function BookList() {
-  const books = useSelector((state: RootState) => state.search.books);
+interface BookListProps {
+  books: Book[]
+}
+
+export default function BookList({ books }: BookListProps) {
   const isLoading = useSelector((state: RootState) => state.search.booksLoading);
   const error = useSelector((state: RootState) => state.search.error);
   const numFound = useSelector((state: RootState) => state.search.numFound);
 
-  // --- Conditional Rendering Logic ---
-
-  // 1. Handle Loading State
   if (isLoading) {
     return <p>Loading search results...</p>;
   }
 
-  // 2. Handle Error State (only if not loading)
   if (error) {
     return <p style={{ color: 'red' }}>Error: {error}</p>;
   }
 
-  // 3. Handle No Results State (only if not loading and no error)
-  //    Check if the array is empty. You might also want to add a condition
-  //    to only show this *after* a search has been attempted, but checking
-  //    length is the most basic way.
   if (books.length === 0) {
     // Could potentially check numFound === 0 here as well, if you want to distinguish
     // between "initial state" and "search returned zero results".

@@ -7,7 +7,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'; // afterEach für
 import searchReducer from '../redux/books/searchSlice';
 import suggestionsReducer from '../redux/books/suggestionsSlice'
 import { Book } from '../redux/books/bookTypes';
-import SearchPage from '../components/SearchPage/SearchPage';
+import SearchPage from '../components/SearchListPage/SearchListPage';
 import { fetchBooks, fetchSuggestions } from '../API/api';
 
 vi.mock('../API/api');

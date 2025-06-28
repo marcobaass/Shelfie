@@ -6,23 +6,23 @@ import { fetchSuggestionsThunk } from '../../redux/books/booksThunks';
 import { AppDispatch } from '../../redux/store';
 import styles from './SearchBar.module.css';
 import searchGif from "../../assets/search.gif";
-import { setSelectedSuggestion } from '../../redux/books/suggestionsSlice';
+import { setSelectedSuggestion, setShowSuggestions, clearSuggestions } from '../../redux/books/suggestionsSlice';
 import { Book } from '@/redux/books/bookTypes';
 
 interface SearchBarProps {
-  onSearch: (query: string) => void;
+  onSearchSubmit: (query: string) => void;
+  onSelectSuggestion: (book: Book) => void;
+  initialShowSuggestions?: boolean;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-
+const SearchBar: React.FC<SearchBarProps> = ({ onSearchSubmit, onSelectSuggestion }) => {
 
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState(query);
   const suggestions = useSelector((state: RootState) => state.suggestions.suggestions);
   const isSuggestionsLoading = useSelector((state: RootState) => state.suggestions.suggestionsLoading);
-  console.log(suggestions)
-  const [showSuggestions, setShowSuggestions] = useState(true)
   const dispatch = useDispatch<AppDispatch>();
+  const showSuggestions = useSelector((state: RootState) => state.suggestions.showSuggestions)
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -45,21 +45,27 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     setQuery(newQuery);
   };
 
-  const handleUIRequest = () => {
-    if(query.trim()) {
-      onSearch(query);
+  const handleFinalSearch = () => {
+    if (query.trim()) {
+      dispatch(setShowSuggestions(false));
+      dispatch(clearSuggestions());
+      onSearchSubmit(query);
+      setQuery('');
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleUIRequest();
+      handleFinalSearch();
     }
   };
 
-  const handleSelectSuggestion = (suggestion: Book) => {
-    console.log("Clicked Suggestion:", suggestion);
+  const handleSuggestionClick = (suggestion: Book) => {
+    dispatch(setShowSuggestions(false))
+    dispatch(clearSuggestions());
     dispatch(setSelectedSuggestion(suggestion));
+    onSelectSuggestion(suggestion);
+    setQuery(suggestion.title || '');
   };
 
   return (
@@ -70,10 +76,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           value={query}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-          onFocus={() => setShowSuggestions(true)}
+          onBlur={() => setTimeout(() => dispatch(setShowSuggestions(false)), 150)}
+          onFocus={() => dispatch(setShowSuggestions(true))}
           placeholder='Search for books or authors'
-          onSubmit={handleUIRequest}
           />
         {isSuggestionsLoading && (
           <div className={styles.searchGif}>
@@ -81,19 +86,19 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           </div>
         )}
       </div>
-      <button onClick={handleUIRequest}>Search</button>
+      <button onClick={handleFinalSearch}>Search</button>
 
       <div className="suggestionBox">
         <ul className={styles.suggestions}>
         {showSuggestions && suggestions.length > 0 ? (
           suggestions.map((suggestion, index) => (
-            <li key={index} onClick={() => handleSelectSuggestion(suggestion)}>
+            <li key={index} onMouseDown={() => handleSuggestionClick(suggestion)}>
               <p>Title: {suggestion.title}</p>
               <p>Author(s): {suggestion.author_name?.join(', ') || "Unknown"}</p>
             </li>
           ))
         ) : (
-          <div></div>
+          null
         )}
         </ul>
       </div>

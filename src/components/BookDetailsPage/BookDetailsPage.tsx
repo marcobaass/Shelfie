@@ -2,9 +2,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store'
 import { Book } from '@/redux/books/bookTypes';
 
-export default function SearchResults() {
+export default function BookDetailsPage() {
   const selectedSuggestion = useSelector((state: RootState): Book | null => state.suggestions.selectedSuggestion)
-  console.log("Redux State - selectedSuggestion:", selectedSuggestion);
+  console.log("Redux State - selectedSuggestion (on BookDetailsPage):", selectedSuggestion);
 
   const imgLink = selectedSuggestion?.cover
                   ? `https://covers.openlibrary.org/b/id/${selectedSuggestion.cover}-M.jpg`

@@ -33,7 +33,7 @@
   text-align: center;
 }
 
-button {
+.searchButton {
   height: 2.5rem;
   border-radius: 0 16px 16px 0;
   flex-shrink: 0;

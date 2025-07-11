@@ -89,7 +89,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearchSubmit, onSelectSuggestio
           )}
         </div>
 
-        <button onClick={handleFinalSearch}>Search</button>
+        <button onClick={handleFinalSearch} className={styles.searchButton}>Search</button>
       </div>
 
       <div className={styles.suggestionBox}>

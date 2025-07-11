@@ -70,31 +70,36 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearchSubmit, onSelectSuggestio
 
   return (
     <div className={styles.searchContainer}>
-      <div className={styles.searchField}>
-        <input
-          type="text"
-          value={query}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onBlur={() => setTimeout(() => dispatch(setShowSuggestions(false)), 150)}
-          onFocus={() => dispatch(setShowSuggestions(true))}
-          placeholder='Search for books or authors'
-          />
-        {isSuggestionsLoading && (
-          <div className={styles.searchGif}>
-            <img src={searchGif} alt="" />
-          </div>
-        )}
-      </div>
-      <button onClick={handleFinalSearch}>Search</button>
 
-      <div className="suggestionBox">
+      <div className={styles.searchBar}>
+        <div className={styles.searchField}>
+          <input
+            type="text"
+            value={query}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
+            onBlur={() => setTimeout(() => dispatch(setShowSuggestions(false)), 150)}
+            onFocus={() => dispatch(setShowSuggestions(true))}
+            placeholder='Search for books or authors'
+            />
+          {isSuggestionsLoading && (
+            <div className={styles.searchGif}>
+              <img src={searchGif} alt="" />
+            </div>
+          )}
+        </div>
+
+        <button onClick={handleFinalSearch}>Search</button>
+      </div>
+
+      <div className={styles.suggestionBox}>
         <ul className={styles.suggestions}>
         {showSuggestions && suggestions.length > 0 ? (
           suggestions.map((suggestion, index) => (
             <li key={index} onMouseDown={() => handleSuggestionClick(suggestion)}>
-              <p>Title: {suggestion.title}</p>
-              <p>Author(s): {suggestion.author_name?.join(', ') || "Unknown"}</p>
+              <p>{suggestion.title}</p>
+              📖
+              <p> {suggestion.author_name?.join(', ') || "Unknown"}</p>
             </li>
           ))
         ) : (

@@ -4,6 +4,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { Provider } from 'react-redux';
 import store from '../../src/redux/store';
 import SearchBar from '../components/SearchBar/SearchBar';
+import { MemoryRouter } from 'react-router-dom';
 
 describe('SearchBar Component', () => {
   it('should call onSearch with the full query when the search button is clicked', async () => {
@@ -11,9 +12,11 @@ describe('SearchBar Component', () => {
     const mockOnSearch = vi.fn();
 
     render (
-      <Provider store={store} >
-        <SearchBar onSearch={mockOnSearch} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={store} >
+          <SearchBar onSearchSubmit={mockOnSearch} onSelectSuggestion={vi.fn()}/>
+        </Provider>
+      </MemoryRouter>
     )
 
     const input = screen.getByPlaceholderText('Search for books or authors');
@@ -32,9 +35,11 @@ describe('SearchBar Component', () => {
     const mockOnSearch = vi.fn();
 
     render(
-      <Provider store={store}>
-        <SearchBar onSearch={mockOnSearch} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={store}>
+          <SearchBar onSearchSubmit={mockOnSearch} onSelectSuggestion={vi.fn()}/>
+        </Provider>
+      </MemoryRouter>
     );
 
     const input = screen.getByPlaceholderText('Search for books or authors');
@@ -62,9 +67,11 @@ describe('SearchBar Component', () => {
     });
 
     render(
-      <Provider store={store}>
-        <SearchBar onSearch={mockOnSearch} />
-      </Provider>
+      <MemoryRouter>
+        <Provider store={store}>
+          <SearchBar onSearchSubmit={mockOnSearch} onSelectSuggestion={vi.fn()}/>
+        </Provider>
+      </MemoryRouter>
     );
 
     const input = screen.getByPlaceholderText('Search for books or authors');

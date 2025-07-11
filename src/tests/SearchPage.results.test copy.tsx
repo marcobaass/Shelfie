@@ -1,8 +1,8 @@
 import userEvent from '@testing-library/user-event';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react'; // act hier nicht unbedingt nötig
 import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit'
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { configureStore } from '@reduxjs/toolkit';
+import { describe, it, expect, vi, beforeEach } from 'vitest'; // afterEach für Timer nicht mehr nötig
 
 import searchReducer from '../redux/books/searchSlice';
 import suggestionsReducer from '../redux/books/suggestionsSlice'
@@ -22,36 +22,30 @@ const mockApiResponse = { docs: mockBookData, numFound: mockBookData.length };
 const mockSuggestionsApiResponse = { docs: [{id: 's1', title: 'React Suggestion', author_name: ['Dev']}], numFound: 1 }; // author_name hinzugefügt
 
 describe('SearchPage Component - Displaying Results', () => {
-  let user: ReturnType<typeof userEvent.setup>;
-  let store: ReturnType<typeof configureStore>;
+  let user: ReturnType<typeof userEvent.setup>; // user wird im beforeEach gesetzt
 
   const mockedFetchBooks = vi.mocked(fetchBooks);
   const mockedFetchSuggestions = vi.mocked(fetchSuggestions);
 
   beforeEach(() => {
-    user = userEvent.setup();
+    // KEINE Fake-Timer hier
+    user = userEvent.setup(); // Einfaches Setup
     vi.clearAllMocks();
-
-    store = configureStore({
-      reducer: {
-        search: searchReducer,
-        suggestions: suggestionsReducer
-      },
-    });
-
     mockedFetchBooks.mockResolvedValue(mockApiResponse);
     mockedFetchSuggestions.mockResolvedValue(mockSuggestionsApiResponse);
   });
+
+  // KEIN afterEach für Timer-Cleanup hier
 
   it('should display book results after a successful search', async () => {
     console.log('[Results Test] Test started');
 
     render(
-      <Provider store={store}>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <SearchPage />
-        </MemoryRouter>
-      </Provider>
+        </Provider>
+      </MemoryRouter>
     );
     const input = screen.getByPlaceholderText(/search/i) as HTMLInputElement; // Für .value
     const button = screen.getByRole('button', { name: /search/i });

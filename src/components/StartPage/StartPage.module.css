@@ -1,0 +1,9 @@
+.serif {
+  font-family: var(--font-accent);
+  font-size: 1.4em;
+  margin-right: 0.2rem;
+}
+
+h1 {
+  font-weight: 500;
+}

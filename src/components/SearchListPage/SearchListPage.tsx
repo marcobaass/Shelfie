@@ -22,9 +22,9 @@ const SearchListPage: React.FC = () => {
     navigate(`/search?q=${encodeURIComponent(query)}`, { replace: true });
   };
 
-  useEffect(() => {
-    dispatch(fetchBooksThunk(query))
-  }, [dispatch, query])
+  // useEffect(() => {
+  //   dispatch(fetchBooksThunk(query))
+  // }, [dispatch, query])
 
   const handleSelectSuggestionAndNavigate = (book: Book) => {
     navigate(`/book/${book.key}`);

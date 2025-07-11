@@ -1,15 +1,11 @@
 .searchContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  position: relative;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
 }
 
 .searchBar {
   display: flex;
   justify-content: center;
-  width: 100%;
 }
 
 .searchField {
@@ -36,7 +32,6 @@
 button {
   height: 2.5rem;
   border-radius: 0 16px 16px 0;
-  flex-shrink: 0;
 }
 
 .searchGif {
@@ -51,16 +46,16 @@ button {
   height: 80%;
   top: 50%;
   transform: translateY(-50%);
+
 }
 
 .suggestionBox {
   position: relative;
-  width: 100%;
 }
 
 .suggestionBox > ul {
   justify-items: center;
-  border-radius: 16px;
+
 }
 
 .suggestionBox > ul > li {
@@ -72,38 +67,26 @@ button {
 .suggestions {
   display: grid;
   justify-items: center;
-  position: absolute;
-  color: white;
+  position: absolute;color: white;
   background-color: var(--clr-medium);
   padding: 0;
-  margin: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  top: var(--gap-3xs)
+  grid-row: 1;
 }
 
 .suggestions > li {
-  border-radius: 16px;
   justify-content: center;
   align-items: center;
   list-style: none;
   cursor: pointer;
-  line-height: 1;
-  margin: 0px 8px;
-  width: 100%;
-}
-
-.suggestions > li > p {
-  max-width: 25ch;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 0;
+  margin: 4px 8px;
 }
 
 .suggestions > li:hover {
-  background-color: var(--clr-dark);
+  background-color: cyan;
 }
 
 .suggestions > li:not(:last-child) {
   border-bottom: 1px grey solid;
+  width: 100%;
 }

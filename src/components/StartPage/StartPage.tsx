@@ -16,7 +16,7 @@ export default function StartPage() {
 
   return(
     <div className={styles.startPageContainer}>
-      <h1 className={styles.welcomeHeading}>Welcome to Shelfie</h1>
+      <h1 className={styles.welcomeHeading}><span className={styles.serif}>W</span>elcome to Shelfie</h1>
       <h2>Organize and discover new reading adventures</h2>
       <h3>Find youre first book</h3>
       <SearchBar

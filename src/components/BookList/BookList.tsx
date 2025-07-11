@@ -20,7 +20,7 @@ export default function BookList({ books }: BookListProps) {
     return <p style={{ color: 'red' }}>Error: {error}</p>;
   }
 
-  if (books.length === 0) {
+  if (!books || books.length === 0) {
     // Could potentially check numFound === 0 here as well, if you want to distinguish
     // between "initial state" and "search returned zero results".
     return <p>No books found matching your query.</p>;

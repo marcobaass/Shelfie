@@ -32,3 +32,9 @@ h3 {
 .bookIconAnimated path {
   stroke: #5C6837;
 }
+
+@media (max-width: 400px) {
+  h1 {
+    font-size: var(--fs-5);
+  }
+}

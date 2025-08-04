@@ -2,6 +2,7 @@ nav {
   display: flex;
   max-width: 1240px;
   justify-content: space-between;
+  align-items: center;
   border-bottom: 2px solid var(--clr-dark);
 }
 
@@ -64,6 +65,16 @@ span {
   text-decoration: underline;
 }
 
+.hamburgerLink {
+  color: white
+}
+
+.hamburgerLink h2:hover {
+  color: rgb(208, 219, 207);
+  transform: scale(1.1);
+  transition: transform 0.2s ease-in-out;
+}
+
 .activeLink:hover {
   color: var(--clr-medium);
   text-decoration: underline;
@@ -71,4 +82,43 @@ span {
 
 .activeLink .navIcon {
   fill: var(--clr-medium);
+}
+
+.hamburgerIconContainer{
+  position: absolute;
+  top: 1.5em;
+  right: 2.5em;
+  display: none;
+}
+
+.hamburgerContainer {
+  position: absolute;
+  inset: 0;
+  color: white;
+  background-color: var(--clr-medium);
+  padding: 6em 0 0 0;
+  z-index: 1;
+  transform: translateY(-100%);
+  transition: transform 0.5s ease-in-out;
+  overflow: hidden;
+}
+
+.hamburgerContainer.open {
+  transform: translateY(0);
+}
+
+@media (max-width: 860px) {
+  .menu {
+    display: none;
+  }
+
+  .hamburgerIconContainer {
+    display: block;
+    z-index: 10;
+  }
+
+  .hamburgerContainer {
+    display: block;
+  }
+
 }

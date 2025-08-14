@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { fetchSuggestionsThunk  } from './booksThunks';
-import { Book } from './bookTypes';
+import { fetchSuggestionsThunk, fetchBookDetailsThunk } from './booksThunks';
+import { Book, RawApiDoc } from './bookTypes';
 
 export interface SuggestionsState {
   suggestions: Book[];
@@ -8,6 +8,8 @@ export interface SuggestionsState {
   error: string | null;
   selectedSuggestion: Book | null;
   showSuggestions: boolean;
+  detailsLoading: boolean;
+  detailedBook: RawApiDoc | null;
 }
 
 const initialState: SuggestionsState = {
@@ -16,6 +18,8 @@ const initialState: SuggestionsState = {
   error: null,
   selectedSuggestion: null,
   showSuggestions: false,
+  detailsLoading: false,
+  detailedBook: null,
 };
 
 const suggestionsSlice = createSlice({
@@ -35,6 +39,7 @@ const suggestionsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // the state for fetchSuggestionsThunk
       .addCase(fetchSuggestionsThunk.pending, (state) => {
         state.suggestionsLoading = true;
         state.error = null;
@@ -48,6 +53,21 @@ const suggestionsSlice = createSlice({
                        ? action.payload
                        : 'Failed to fetch suggestions';
         state.suggestionsLoading = false;
+      })
+
+      // new cases for fetchBookDetailsThunk
+      .addCase(fetchBookDetailsThunk.pending, (state) => {
+        state.detailsLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchBookDetailsThunk.fulfilled, (state, action) => {
+        state.detailedBook = action.payload;
+        state.detailsLoading = false
+      })
+      .addCase(fetchBookDetailsThunk.rejected, (state, action) => {
+        // The thunk's rejectValue guarantees a string payload
+        state.error = action.payload as string;
+        state.detailsLoading = false;
       })
   },
 });

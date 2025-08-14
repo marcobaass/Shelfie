@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import SearchBar from '../SearchBar/SearchBar'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchBooksThunk } from '../../redux/books/booksThunks';
+import { fetchBooksThunk, fetchBookDetailsThunk } from '../../redux/books/booksThunks';
 import { AppDispatch, RootState } from '@/redux/store';
 import BookList from '../BookList/BookList';
 import { useNavigate } from 'react-router-dom';
 import { useSearchParams  } from 'react-router-dom';
-import { useEffect } from 'react';
+import { setSelectedSuggestion } from '../../redux/books/suggestionsSlice'
+import { Book } from '@/redux/books/bookTypes'
 
 const SearchListPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams] = useSearchParams()
 
   const query = searchParams.get('q')
 
@@ -22,13 +23,21 @@ const SearchListPage: React.FC = () => {
     navigate(`/search?q=${encodeURIComponent(query)}`, { replace: true });
   };
 
-  // useEffect(() => {
-  //   dispatch(fetchBooksThunk(query))
-  // }, [dispatch, query])
 
   const handleSelectSuggestionAndNavigate = (book: Book) => {
-    navigate(`/book/${book.key}`);
+    // 1. Dispatch the action to set the selected book in the Redux store.
+    dispatch(setSelectedSuggestion(book));
+    // 2. Dispatch the thunk to fetch the detailed information for that book, using its unique key as the ID.
+    dispatch(fetchBookDetailsThunk(book.id));
+    // 3. Navigate to the book details page.
+    navigate(`/book/${book.id}`);
   };
+
+  useEffect(() => {
+    if (query) {
+      dispatch(fetchBooksThunk(query));
+    }
+  }, [dispatch, query]);
 
   return (
     <div>
@@ -39,7 +48,9 @@ const SearchListPage: React.FC = () => {
         initialShowSuggestions={false}
       />
 
-      <BookList books={booksToDisplay} />
+      <BookList books={booksToDisplay}
+        onBookClick={handleSelectSuggestionAndNavigate}
+      />
     </div>
   );
 };

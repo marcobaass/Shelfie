@@ -5,6 +5,7 @@ export interface Book {
   cover?: number;
   year?: number;
   synopsis?: string;
+  number_of_pages?: number;
 }
 
 export interface RawApiDoc {
@@ -17,4 +18,5 @@ export interface RawApiDoc {
   first_publish_year?: number;
   year?: number;
   synopsis?: string;
+  number_of_pages?: number;
 }

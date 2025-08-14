@@ -2,6 +2,7 @@ import { Book, RawApiDoc } from '../../src/redux/books/bookTypes';
 
 export function mapRawDocToBook(rawDoc: RawApiDoc): Book | null {
   const idSource = rawDoc.key ?? rawDoc.id;
+
   const title = rawDoc.title;
 
   if(!idSource || !title) {
@@ -10,8 +11,10 @@ export function mapRawDocToBook(rawDoc: RawApiDoc): Book | null {
 
   const idSourceString = String(idSource);
   const finalId = idSourceString.includes('/')
-                  ? idSourceString.split('/').pop() || ''
-                  : idSourceString;
+  ? idSourceString.split('/').pop() || ''
+  : idSourceString;
+
+  console.log('ID: ',finalId);
 
   if(!finalId) return null
 
@@ -21,7 +24,8 @@ export function mapRawDocToBook(rawDoc: RawApiDoc): Book | null {
     author_name: rawDoc.author_name || [],
     cover: rawDoc.cover ?? rawDoc.cover_i,
     year: rawDoc.year ?? rawDoc.first_publish_year,
-    synopsis: rawDoc.synopsis
+    synopsis: rawDoc.synopsis,
+    number_of_pages: rawDoc.number_of_pages,
   };
 
   return formattedBook

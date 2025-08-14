@@ -4,10 +4,11 @@ import styles from './BookList.module.css';
 import { Book } from '@/redux/books/bookTypes'
 
 interface BookListProps {
-  books: Book[]
+  books: Book[],
+  onBookClick: (book: Book) => void;
 }
 
-export default function BookList({ books }: BookListProps) {
+export default function BookList({ books, onBookClick }: BookListProps ) {
   const isLoading = useSelector((state: RootState) => state.search.booksLoading);
   const error = useSelector((state: RootState) => state.search.error);
   const numFound = useSelector((state: RootState) => state.search.numFound);
@@ -21,8 +22,6 @@ export default function BookList({ books }: BookListProps) {
   }
 
   if (!books || books.length === 0) {
-    // Could potentially check numFound === 0 here as well, if you want to distinguish
-    // between "initial state" and "search returned zero results".
     return <p>No books found matching your query.</p>;
   }
 
@@ -36,7 +35,11 @@ export default function BookList({ books }: BookListProps) {
       <ul>
         {books.map((book) => (
           // Use the unique book ID as the key
-          <li key={book.id} className={styles.booklist}>
+          <li
+            key={book.id}
+            className={styles.booklist}
+            onClick={() => onBookClick(book)}
+          >
             <h3>{book.title}</h3>
             <p>
               Author(s): {book.author_name?.join(', ') || 'Unknown Author'}

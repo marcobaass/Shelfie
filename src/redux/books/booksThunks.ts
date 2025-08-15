@@ -1,6 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchBooks, fetchSuggestions, fetchBookDetails } from '../../API/api';
-import { Book, RawApiDoc } from './bookTypes';
+import {
+  fetchBooks,
+  fetchSuggestions,
+  fetchBookDetails,
+  fetchEditions,
+} from '../../API/api';
+import { Book, RawApiDoc, RawEditionApiDoc } from './bookTypes';
 import { mapRawDocToBook } from '../../utils/bookUtils'
 
 interface FetchBooksResponse {
@@ -94,42 +99,36 @@ export const fetchSuggestionsThunk = createAsyncThunk<
 
 //
 export const fetchBookDetailsThunk = createAsyncThunk<
-  // The first generic type parameter is the expected payload for the 'fulfilled' action.
-  // We expect a single RawApiDoc object with all the book's details.
   RawApiDoc,
-  // The second generic type parameter is the argument that the thunk will accept when dispatched.
-  // The unique book ID is a string, which is passed here.
   string,
-  // The third generic type parameter is an optional configuration for the thunk.
-  // It specifies the payload type for the 'rejected' action, which is a simple string.
   { rejectValue: string }
 >(
-
-  // String used from Redux for unique actiontypes for pending, fullfilled, rejected
   'books/fetchBookDetails',
-
-  // This is the main payload creator function. It's marked as 'async' because it will
-  // perform an asynchronous API call.
-  // - 'bookId' is the string argument passed to the thunk.
-  // - '{ rejectWithValue }' is a helper function from Redux Toolkit used to manually
-  //   dispatch a 'rejected' action with a custom payload.
   async (bookId, { rejectWithValue }) => {
-    // The code in the 'try' block is executed, and if an error occurs, it jumps to 'catch'.
     try {
-      // call to api.ts for fetchBookDetails()
-      const rawData: RawApiDoc = await fetchBookDetails(bookId);
-      // If the API call is successful, this data is returned. This returned value
-      // becomes the payload for the 'fulfilled' action.
-      return rawData;
+      const rawDetails: RawApiDoc = await fetchBookDetails(bookId);
+      return rawDetails;
 
     } catch (error: unknown) {
       return rejectWithValue(
-        // If the 'error' is an instance of the standard JavaScript 'Error' object,
-        // we use its specific 'message'.
         error instanceof Error ? error.message : 'An unknown error occurred'
-        // Otherwise, for any other type of error (e.g., a network error), we provide
-        // a generic, user-friendly fallback message.
       );
     }
   }
 );
+
+// Thunk for fetching all editions of a specific work
+export const fetchEditionsThunk = createAsyncThunk<
+  RawEditionApiDoc[],
+  string,
+  { rejectValue: string }
+>('books/fetchEditions', async (workId, { rejectWithValue }) => {
+  try {
+    const rawEditions: RawEditionApiDoc[] = await fetchEditions(workId);
+    return rawEditions;
+  } catch (error: unknown) {
+    return rejectWithValue(
+      error instanceof Error ? error.message : 'An unkown error occured'
+    );
+  }
+});

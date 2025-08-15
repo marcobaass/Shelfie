@@ -1,3 +1,4 @@
+// export interface Search and Suggestions
 export interface Book {
   id: string;
   title: string;
@@ -8,6 +9,7 @@ export interface Book {
   number_of_pages?: number;
 }
 
+// BookDetails
 export interface RawApiDoc {
   key?: string;
   id?: string;
@@ -19,4 +21,64 @@ export interface RawApiDoc {
   year?: number;
   synopsis?: string;
   number_of_pages?: number;
+  description?: string;
+}
+
+// BookEditions
+// This is the interface representing a single book edition object.
+export interface RawEditionApiDoc {
+  publishers?: string[];
+  number_of_pages?: number;
+  table_of_contents?: TableOfContentsEntry[];
+  covers?: number[];
+  lc_classifications?: string[];
+  latest_revision?: number;
+  key?: string; // The unique key for this edition.
+  authors?: AuthorReference[];
+  ocaid?: string;
+  publish_places?: string[];
+  isbn_13?: string[];
+  pagination?: string;
+  source_records?: string[];
+  subtitle?: string;
+  title?: string;
+  lccn?: string[];
+  notes?: string;
+  identifiers?: Record<string, string[]>;
+  created?: DateTime;
+  languages?: LanguageReference[];
+  dewey_decimal_class?: string[];
+  last_modified?: DateTime;
+  publish_date?: string;
+  publish_country?: string;
+  by_statement?: string;
+  oclc_numbers?: string[];
+  works?: WorkReference[];
+  type?: { key: string };
+  revision?: number;
+}
+
+// Sub-interfaces for the nested data.
+interface TableOfContentsEntry {
+  level: number;
+  label: string;
+  title: string;
+  pagenum?: string;
+}
+
+interface AuthorReference {
+  key: string; // The unique key for the author.
+}
+
+interface LanguageReference {
+  key: string; // The unique key for the language (e.g., /languages/eng).
+}
+
+interface WorkReference {
+  key: string; // The unique key for the related work.
+}
+
+interface DateTime {
+  type: string;
+  value: string;
 }

@@ -40,20 +40,20 @@ export default function BookList({ books, onBookClick }: BookListProps ) {
             className={styles.booklist}
             onClick={() => onBookClick(book)}
           >
-            <h3>{book.title}</h3>
-            <p>
-              Author(s): {book.author_name?.join(', ') || 'Unknown Author'}
-              {book.year && ` (${book.year})`} {/* Optionally show year */}
-            </p>
             {book.cover && (
                 <img
-                  style={{ maxHeight: '100px', float: 'left', marginRight: '10px' }}
-                  src={`https://covers.openlibrary.org/b/id/${book.cover}-S.jpg`} // Small cover
+                  className={styles.covers}
+                  // style={{ maxHeight: '100px', float: 'left', marginRight: '10px' }}
+                  src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
                   alt={`${book.title} cover`}
                 />
              )}
-             {/* Maybe add a snippet of synopsis if available */}
-             {book.synopsis && <p><i>{book.synopsis.substring(0, 150)}...</i></p>}
+            <h3>{book.title}</h3>
+            <p>
+              Author(s): {book.author_name?.join(', ') || 'Unknown Author'}
+              <hr></hr>
+              {book.year && `${book.year}`} {/* Optionally show year */}
+            </p>
           </li>
         ))}
       </ul>

@@ -1,7 +1,7 @@
 .booklist {
   height: 100px;
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-items: center;
   list-style: none;
   border-bottom: 1px solid #eee;
@@ -24,4 +24,30 @@
 
 h3, p {
   margin: 0;
+}
+
+.pagination {
+  margin-inline: var(--gap-m);
+}
+
+.paginationButton {
+  height: 2.5rem;
+  border-radius: 16px;
+  flex-shrink: 0;
+  transition: scale 125ms;
+}
+
+.paginationButton:hover {
+  scale: 0.9;
+}
+
+.truncatedText {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-inline: var(--gap-2xs);
+  }
+
+.authorAndYear {
+  margin-left: auto;
 }

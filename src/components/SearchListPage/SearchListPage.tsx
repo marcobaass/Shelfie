@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBar from '../SearchBar/SearchBar'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchBooksThunk, fetchBookDetailsThunk } from '../../redux/books/booksThunks';
@@ -12,15 +12,22 @@ import { Book } from '@/redux/books/bookTypes'
 const SearchListPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const query = searchParams.get('q')
 
+  const numFound = useSelector((state: RootState) => state.search.numFound);
+
   const booksToDisplay = useSelector((state: RootState) => state.search.books)
 
+  const booksPerPage = 100; // or whatever your API uses
+  const totalPages = Math.ceil(numFound / booksPerPage);
+
   const handleSearchSubmit = (query: string) => {
-    dispatch(fetchBooksThunk(query));
-    navigate(`/search?q=${encodeURIComponent(query)}`, { replace: true });
+    const newParams = new URLSearchParams();
+    newParams.set('q', query);
+    newParams.set('page', '1');
+    setSearchParams(newParams, { replace: true });
   };
 
 
@@ -33,11 +40,13 @@ const SearchListPage: React.FC = () => {
     navigate(`/book/${book.id}`);
   };
 
+  const [page, setPage] = useState(1);
+
   useEffect(() => {
     if (query) {
-      dispatch(fetchBooksThunk(query));
+      dispatch(fetchBooksThunk({query, page}));
     }
-  }, [dispatch, query]);
+  }, [dispatch, query, page]);
 
   return (
     <div>
@@ -50,6 +59,10 @@ const SearchListPage: React.FC = () => {
 
       <BookList books={booksToDisplay}
         onBookClick={handleSelectSuggestionAndNavigate}
+        page={page}
+        setPage={setPage}
+        numFound={numFound}
+        totalPages={totalPages}
       />
     </div>
   );

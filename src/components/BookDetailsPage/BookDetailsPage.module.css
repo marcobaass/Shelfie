@@ -13,8 +13,8 @@ h1.title {
 
 h2.author {
   font-size: var(--fs--1);
-  margin: 0.25em;
   text-decoration: underline;
+  margin-top: 0.175em;
 }
 
 .navIconTrans {
@@ -44,6 +44,10 @@ p {
   margin-bottom: 0;
 }
 
+.infoWrapper {
+  margin-top: var(--gap-2xs);
+}
+
 .info {
   font-weight: 600;
 }
@@ -58,4 +62,12 @@ p {
 
 .placeholder {
   max-height: 300px;
+}
+
+.genres {
+  display: flex;
+  gap: 2em;
+  margin-top: var(--gap-2xs);
+  font-weight: 600;
+  text-decoration: underline;
 }

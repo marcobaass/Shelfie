@@ -22,16 +22,22 @@ interface RawBooksApiResponse {
   numFound: number;
 }
 
+interface FetchBooksArgs {
+  query: string;
+  page?: number;
+  limit?: number;
+}
+
 export const fetchBooksThunk = createAsyncThunk<
   FetchBooksResponse,
-  string,
+  FetchBooksArgs,
   { rejectValue: string}
   >(
   'search/fetchBooks',
-  async (query, { rejectWithValue }) => {
+  async ({ query, page = 1 }, { rejectWithValue }) => {
     try {
       // 1. Fetch RAW data from API
-      const rawData: RawBooksApiResponse = await fetchBooks(query);
+      const rawData: RawBooksApiResponse = await fetchBooks(query, page);
 
       // 2. Validate RAW data structure
       if (!rawData || !Array.isArray(rawData.docs) || typeof rawData.numFound !== 'number') {

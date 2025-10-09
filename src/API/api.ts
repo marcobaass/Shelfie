@@ -6,11 +6,12 @@ const API_URL = 'https://openlibrary.org';
 /**
  * Fetches a list of books from the Open Library search API.
  * @param query The search query string.
+ * @param page The number for the pagination
  * @returns A promise that resolves to an array of raw document objects.
  */
-export const fetchBooks = async (query: string): Promise<{ docs: RawApiDoc[]; numFound: number }> => {
+export const fetchBooks = async (query: string, page: number): Promise<{ docs: RawApiDoc[]; numFound: number }> => {
   try {
-    const response = await axios.get(`${API_URL}/search.json?q=${encodeURIComponent(query)}`);
+    const response = await axios.get(`${API_URL}/search.json?q=${encodeURIComponent(query)}&page=${page}&limit=10`);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -41,7 +42,6 @@ export const fetchSuggestions = async (query: string): Promise<RawApiDoc[]> => {
  * @returns A promise that resolves to a raw document object.
  */
 export const fetchBookDetails = async (bookId: string): Promise<RawApiDoc> => {
-  console.log(bookId);
   try {
     const response = await axios.get(`${API_URL}/works/${bookId}.json`);
     return response.data;

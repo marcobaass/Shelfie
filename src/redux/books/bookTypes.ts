@@ -22,6 +22,7 @@ export interface RawApiDoc {
   synopsis?: string;
   number_of_pages?: number;
   description?: string;
+  subjects?: string[]
 }
 
 // BookEditions

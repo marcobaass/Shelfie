@@ -7,12 +7,14 @@ import { useState, useEffect } from 'react';
 import { fetchBookDetailsThunk, fetchEditionsThunk } from "../../redux/books/booksThunks";
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { splitSubjects } from '../../utils/subjectsList';
+import { updateBookStatus, StatusType } from '../../utils/bookStatusUtils';
+import { getDescription } from '../../utils/bookUtils';
 
 import HeartIcon from '../../assets/icons/heartIcon.svg?react';
 import BookIcon from '../../assets/icons/bookIcon.svg?react';
 import FinishIcon from '../../assets/icons/finishIcon.svg?react';
-
 import placeholderImg from '../../assets/images/book-stack.png';
+import EditionsCarousel from '../EditionsCarousel/EditionsCarousel';
 
 export default function BookDetailsPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -29,26 +31,10 @@ export default function BookDetailsPage() {
   const [reading, setReading] = useLocalStorage<Book[]>('reading', []);
   const [finished, setFinished] = useLocalStorage<Book[]>('finished', []);
 
-  const isOnWishlist = id ? wishlist.some(book => book.id === id) : false;
-  const isOnReading = id ? reading.some(book => book.id === id) : false;
-  const isOnFinished = id ? finished.some(book => book.id === id) : false;
-
   const displayBook = detailedBook || selectedSuggestion;
-
-  type Description = string | { value: string } | undefined | null;
-
-  const getDescription = (description: Description): string => {
-    if (!description) return 'No synopsis yet';
-    if (typeof description === 'string') return description;
-    if (typeof description === 'object' && 'value' in description) {
-      return description.value;
-    }
-    return 'No synopsis yet';
-  };
 
   useEffect(() => {
     setIsCoverLoaded(false);
-
     if(id) {
       dispatch(fetchBookDetailsThunk(id)).catch(error => {
         console.error('Failed to fetch book details:', error);
@@ -57,17 +43,21 @@ export default function BookDetailsPage() {
         console.error('Failed to fetch editions:', error);
       });
     }
-  }, [dispatch, id])
-
-  const imgLink = selectedSuggestion?.cover
-                  ? `https://covers.openlibrary.org/b/id/${selectedSuggestion.cover}-M.jpg`
-                  : null;
+  }, [dispatch, id]);
 
   if (detailsLoading) {
     return <p>Loading book details...</p>;
   }
 
-  function handleStatusChange(status: 'wishlist' | 'reading' | 'finished') {
+  const isOnWishlist = id ? wishlist.some(book => book.id === id) : false;
+  const isOnReading = id ? reading.some(book => book.id === id) : false;
+  const isOnFinished = id ? finished.some(book => book.id === id) : false;
+
+  const imgLink = selectedSuggestion?.cover
+                  ? `https://covers.openlibrary.org/b/id/${selectedSuggestion.cover}-M.jpg`
+                  : null;
+
+  function handleStatusChange(status: StatusType) {
     if(!id || !displayBook) return;
 
     const bookToStore: Book = {
@@ -78,49 +68,19 @@ export default function BookDetailsPage() {
       year: displayBook.year || selectedSuggestion?.year
     };
 
-    switch (status) {
-      case 'wishlist':
-        if (isOnWishlist) {
-        setWishlist(wishlist.filter(book => book.id !== id));
-      } else {
-        setWishlist([...wishlist, bookToStore]);
-        setReading(reading.filter(book => book.id !== id));
-        setFinished(finished.filter(book => book.id !== id));
-      }
-      break;
-
-      case 'reading':
-        if (isOnReading) {
-          setReading(reading.filter(book => book.id !== id));
-        } else {
-          setWishlist(wishlist.filter(book => book.id !== id));
-          setReading([...reading, bookToStore]);
-          setFinished(finished.filter(book => book.id !== id));
-        }
-        break;
-
-      case 'finished':
-        if (isOnFinished) {
-          setFinished(finished.filter(book => book.id !== id));
-        } else {
-          setWishlist(wishlist.filter(book => book.id !== id));
-          setReading(reading.filter(book => book.id !== id));
-          setFinished([...finished, bookToStore]);
-        }
-        break;
-
-      default:
-        break;
-    }
+    const updatedLists = updateBookStatus(bookToStore, status, wishlist, reading, finished);
+    setWishlist(updatedLists.wishlist);
+    setReading(updatedLists.reading);
+    setFinished(updatedLists.finished);
   }
 
   const filteredSubjects = splitSubjects(detailedBook?.subjects || [], 8)
-
 
   return (
     <div>
       {displayBook ? (
         <div className={styles.wrapper}>
+
           <div className={styles.imageContainer}>
             {/* Cover */}
             {!isCoverLoaded && (
@@ -141,25 +101,33 @@ export default function BookDetailsPage() {
               />
             )}
 
+            <div className={styles.icons}>
+              <HeartIcon
+                viewBox="0 0 46 42"
+                className={!isOnWishlist ? styles.navIconTrans : styles.navIconFill}
+                onClick={() => handleStatusChange('wishlist')}
+              />
+              <BookIcon
+                viewBox="0 0 46 42"
+                className={!isOnReading ? styles.navIconTrans : styles.navIconFill}
+                onClick={() => handleStatusChange('reading')}
+              />
+              <FinishIcon
+                viewBox="0 0 46 42"
+                className={!isOnFinished ? styles.navIconTrans : styles.navIconFill}
+                onClick={() => handleStatusChange('finished')}
+              />
+            </div>
           </div>
+
+
 
           {/* Book Infos */}
           <div className={styles.bookDetails}>
             <div className={styles.titleWrapper}>
               <h1 className={styles.title}>{displayBook.title}</h1>
-              <HeartIcon
-                className={!isOnWishlist ? styles.navIconTrans : styles.navIconFill}
-                onClick={() => handleStatusChange('wishlist')}
-              />
-              <BookIcon
-                className={!isOnReading ? styles.navIconTrans : styles.navIconFill}
-                onClick={() => handleStatusChange('reading')}
-              />
-              <FinishIcon
-                className={!isOnFinished ? styles.navIconTrans : styles.navIconFill}
-                onClick={() => handleStatusChange('finished')}
-              />
             </div>
+
             <h2 className={styles.author}>{selectedSuggestion?.author_name?.join(', ') || 'Author unknown'}</h2>
             <p>{getDescription(detailedBook?.description)}</p>
 
@@ -174,18 +142,26 @@ export default function BookDetailsPage() {
               }</p>
             </div>
 
-            {/* Subjects */}
-            <div className={styles.genres}>
-              {filteredSubjects.displayedSubjects.map((displayedSub: string) => (
-                <p key={displayedSub}>{displayedSub}</p>
-                ))
-              }
-            </div>
+          {/* Subjects */}
+          <div className={styles.genres}>
+            {filteredSubjects.displayedSubjects.map((displayedSub: string) => (
+              <p key={displayedSub}>{displayedSub}</p>
+              ))
+            }
+          </div>
           </div>
         </div>
+
+
       ) : (
         <p>No book selected. Please use the search bar to find a book.</p>
       )}
+
+      {/* Editions Carousel */}
+      <EditionsCarousel
+        detailedBook={detailedBook}
+        detailedEditions={detailedEditions}
+      />
     </div>
   )
 }

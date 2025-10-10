@@ -45,9 +45,40 @@ h3, p {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    margin-inline: var(--gap-2xs);
   }
 
-.authorAndYear {
+.iconsAndYear {
   margin-left: auto;
+}
+
+.navIconTrans {
+  fill: transparent;
+  height: calc((var(--fs-nav-s)) * 0.75);
+  transition: fill 0.25s ease-in-out;
+}
+
+.navIconFill {
+  fill: var(--clr-medium);
+  height: calc((var(--fs-nav-s)) * 0.75);
+  transition: fill 0.25s ease-in-out;
+}
+
+.navIconTrans:hover,
+.navIconFill:hover {
+  scale: 1.1;
+  transition: scale 0.125s ease-in-out;
+}
+
+.icons {
+  text-align: left;
+}
+
+.tileAndAuthor {
+  display: flex;
+  gap: var(--gap-2xs);
+  margin-inline: var(--gap-2xs);
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  line-height: 1;
 }

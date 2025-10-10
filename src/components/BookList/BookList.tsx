@@ -4,6 +4,11 @@ import styles from './BookList.module.css';
 import { Book } from '@/redux/books/bookTypes';
 import placeholderImg from '../../assets/images/book-stack.png';
 import { useState } from 'react';
+import { updateBookStatus, StatusType } from '../../utils/bookStatusUtils';
+import HeartIcon from '../../assets/icons/heartIcon.svg?react';
+import BookIcon from '../../assets/icons/bookIcon.svg?react';
+import FinishIcon from '../../assets/icons/finishIcon.svg?react';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 interface BookListProps {
   books: Book[],
@@ -26,6 +31,22 @@ export default function BookList({
   isLoading: externalIsLoading,
   error: externalError
  }: BookListProps ) {
+
+  const [wishlist, setWishlist] = useLocalStorage<Book[]>('wishlist', []);
+  const [reading, setReading] = useLocalStorage<Book[]>('reading', []);
+  const [finished, setFinished] = useLocalStorage<Book[]>('finished', []);
+
+  function handleStatusChange(book: Book, status: StatusType) {
+    console.log(book.id, book);
+
+    if(!book.id || !book) return;
+
+    const updatedLists = updateBookStatus(book, status, wishlist, reading, finished);
+    setWishlist(updatedLists.wishlist);
+    setReading(updatedLists.reading);
+    setFinished(updatedLists.finished);
+  }
+
   const reduxIsLoading = useSelector((state: RootState) => state.search.booksLoading);
   const reduxError = useSelector((state: RootState) => state.search.error);
 
@@ -74,58 +95,90 @@ export default function BookList({
       {numFound > 0 && <p style={{marginTop: '1rem'}}>Found {numFound} results:</p>}
 
       <ul>
-        {books.map((book) => (
-          <li
-            key={book.id}
-            className={styles.booklist}
-            onClick={() => onBookClick(book)}
-          >
-            <img
-              src={placeholderImg}
-              alt="placeholder-image"
-              className={styles.covers}
-              style={{ display: loadedCovers[book.id] ? 'none' : 'block' }}
-            />
-            {book.cover && (
-                <img
-                  key={book.id}
-                  className={styles.covers}
-                  src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
-                  alt={`${book.title} cover`}
-                  onLoad={() => handleCoverLoad(book.id)}
-                  onError={() => handleCoverError(book.id)}
+        {books.map((book) => {
+          const isOnWishlist = wishlist.some(b => b.id === book.id);
+          const isOnReading = reading.some(b => b.id === book.id);
+          const isOnFinished = finished.some(b => b.id === book.id);
+
+          return (
+            <li
+              key={book.id}
+              className={styles.booklist}
+              onClick={() => onBookClick(book)}
+            >
+              <img
+                src={placeholderImg}
+                alt="placeholder-image"
+                className={styles.covers}
+                style={{ display: loadedCovers[book.id] ? 'none' : 'block' }}
+              />
+              {book.cover && (
+                  <img
+                    key={book.id}
+                    className={styles.covers}
+                    src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
+                    alt={`${book.title} cover`}
+                    onLoad={() => handleCoverLoad(book.id)}
+                    onError={() => handleCoverError(book.id)}
+                  />
+               )}
+              <div className={styles.tileAndAuthor}>
+                <h3 className={styles.truncatedText}>{book.title}</h3>
+                  <p>
+                    Author(s): {authorsFormat(book.author_name ?? [])}
+                    {/* Author(s): {book.author_name?.join(', ') || 'Unknown Author'} */}
+                  </p>
+              </div>
+
+              <p className={styles.iconsAndYear}>
+                <HeartIcon
+                  className={!isOnWishlist ? styles.navIconTrans : styles.navIconFill}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStatusChange(book, 'wishlist');
+                  }}
                 />
-             )}
-            <h3 className={styles.truncatedText}>{book.title}</h3>
-            <p className={styles.authorAndYear}>
-              Author(s): {authorsFormat(book.author_name ?? [])}
-              {/* Author(s): {book.author_name?.join(', ') || 'Unknown Author'} */}
-              <hr></hr>
-              {book.year && `${book.year}`} {/* Optionally show year */}
-            </p>
-          </li>
-        ))}
-      </ul>
-      {/* pagination controls */}
-      {showPagination && setPage &&(
-        <div className={styles.pagination}>
-          <button
-            onClick={() => setPage(page - 1)}
-            disabled={page <= 1}
-            className={styles.paginationButton}
-          >
-            <p>Previous</p>
-          </button>
-          <span style={{margin: '3rem'}}>Page {page}</span>
-          <button
-            onClick={() => setPage(page + 1)}
-            disabled={!totalPages || page >= totalPages}
-            className={styles.paginationButton}
-          >
-            <p>Next</p>
-          </button>
-        </div>
-      )}
-    </div>
-  );
+                <BookIcon
+                  className={!isOnReading ? styles.navIconTrans : styles.navIconFill}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStatusChange(book, 'reading');
+                  }}
+                />
+                <FinishIcon
+                  className={!isOnFinished ? styles.navIconTrans : styles.navIconFill}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStatusChange(book, 'finished');
+                  }}
+                />
+                <hr></hr>
+                {book.year && `${book.year}`} {/* Optionally show year */}
+              </p>
+            </li>
+          );
+        })}
+        </ul>
+        {/* pagination controls */}
+        {showPagination && setPage &&(
+          <div className={styles.pagination}>
+            <button
+              onClick={() => setPage(page - 1)}
+              disabled={page <= 1}
+              className={styles.paginationButton}
+            >
+              <p>Previous</p>
+            </button>
+            <span style={{margin: '3rem'}}>Page {page}</span>
+            <button
+              onClick={() => setPage(page + 1)}
+              disabled={!totalPages || page >= totalPages}
+              className={styles.paginationButton}
+            >
+              <p>Next</p>
+            </button>
+          </div>
+        )}
+      </div>
+    )
 }

@@ -30,3 +30,7 @@ export function mapRawDocToBook(rawDoc: RawApiDoc): Book | null {
 
   return formattedBook
 }
+
+export const getDescription = (desc: string | { value: string } | undefined | null): string =>
+  !desc ? 'No synopsis yet' : typeof desc === 'string' ? desc : desc.value ?? 'No synopsis yet';
+

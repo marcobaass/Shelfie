@@ -7,6 +7,8 @@ export interface Book {
   year?: number;
   synopsis?: string;
   number_of_pages?: number;
+  authors?: string[];
+
 }
 
 // BookDetails
@@ -22,7 +24,15 @@ export interface RawApiDoc {
   synopsis?: string;
   number_of_pages?: number;
   description?: string;
-  subjects?: string[]
+  subjects?: string[];
+  authors?: Array<{
+    author: {
+      key: string;
+    };
+    type?: {
+      key: string;
+    };
+  }>;
 }
 
 // BookEditions
@@ -50,6 +60,7 @@ export interface RawEditionApiDoc {
   languages?: LanguageReference[];
   dewey_decimal_class?: string[];
   last_modified?: DateTime;
+  physical_format?: string;
   publish_date?: string;
   publish_country?: string;
   by_statement?: string;
@@ -57,6 +68,7 @@ export interface RawEditionApiDoc {
   works?: WorkReference[];
   type?: { key: string };
   revision?: number;
+  description: string;
 }
 
 // Sub-interfaces for the nested data.
@@ -82,4 +94,21 @@ interface WorkReference {
 interface DateTime {
   type: string;
   value: string;
+}
+
+// type for the fetched Author Data
+export interface AuthorApiDoc {
+  docs: AuthorApiDoc[];
+  name: string;
+  key: string;
+  bio?: string | { type: string; value: string };
+  birth_date?: string;
+  death_date?: string;
+  alternate_names?: string[];
+  photos?: number[];
+  links?: Array<{
+    url: string;
+    title: string;
+    type: { key: string };
+  }>;
 }

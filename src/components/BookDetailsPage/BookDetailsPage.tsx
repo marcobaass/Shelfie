@@ -1,15 +1,14 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store'
-import { Book, RawApiDoc, RawEditionApiDoc } from '@/redux/books/bookTypes';
+import { AuthorApiDoc, Book, RawApiDoc, RawEditionApiDoc } from '@/redux/books/bookTypes';
 import styles from './BookDetailsPage.module.css';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { fetchBookDetailsThunk, fetchEditionsThunk } from "../../redux/books/booksThunks";
+import { fetchAuthorsThunk, fetchBookDetailsThunk, fetchEditionsThunk } from "../../redux/books/booksThunks";
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { splitSubjects } from '../../utils/subjectsList';
 import { updateBookStatus, StatusType } from '../../utils/bookStatusUtils';
 import { getDescription } from '../../utils/bookUtils';
-
 import HeartIcon from '../../assets/icons/heartIcon.svg?react';
 import BookIcon from '../../assets/icons/bookIcon.svg?react';
 import FinishIcon from '../../assets/icons/finishIcon.svg?react';
@@ -19,11 +18,17 @@ import EditionsCarousel from '../EditionsCarousel/EditionsCarousel';
 export default function BookDetailsPage() {
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams();
+  const location = useLocation();
+  const passedEdition = location.state?.edition as RawEditionApiDoc | undefined;
+  const passedWorkId = location.state?.workId;
+  const navigate = useNavigate()
 
   const selectedSuggestion = useSelector((state: RootState): Book | null => state.suggestions.selectedSuggestion)
   const detailedBook = useSelector((state: RootState): RawApiDoc | null => state.suggestions.detailedBook);
   const detailsLoading = useSelector((state: RootState): boolean => state.suggestions.detailsLoading);
   const detailedEditions = useSelector((state: RootState): RawEditionApiDoc[] | null => state.suggestions.detailedEditions);
+  const detailedAuthors = useSelector((state: RootState): AuthorApiDoc[] => state.authors.authors)
+console.log(detailedAuthors);
 
   const [isCoverLoaded, setIsCoverLoaded] = useState(false);
 
@@ -33,17 +38,30 @@ export default function BookDetailsPage() {
 
   const displayBook = detailedBook || selectedSuggestion;
 
+  console.log(detailedBook);
+
+  // fetching Bookdetails and Editions
   useEffect(() => {
     setIsCoverLoaded(false);
     if(id) {
-      dispatch(fetchBookDetailsThunk(id)).catch(error => {
+      const effectiveId = passedWorkId || id;
+
+      dispatch(fetchBookDetailsThunk(effectiveId)).catch(error => {
         console.error('Failed to fetch book details:', error);
       });
-      dispatch(fetchEditionsThunk(id)).catch(error => {
+      dispatch(fetchEditionsThunk(effectiveId)).catch(error => {
         console.error('Failed to fetch editions:', error);
       });
     }
-  }, [dispatch, id]);
+  }, [dispatch, id, passedWorkId]);
+
+  //fetching Authors
+  useEffect(() => {
+    if (detailedBook?.authors && detailedBook.authors.length > 0) {
+      const authorKeys = detailedBook?.authors?.map((authorKey) => authorKey.author.key)
+      dispatch(fetchAuthorsThunk(authorKeys))
+    }
+  }, [detailedBook, dispatch])
 
   if (detailsLoading) {
     return <p>Loading book details...</p>;
@@ -53,8 +71,8 @@ export default function BookDetailsPage() {
   const isOnReading = id ? reading.some(book => book.id === id) : false;
   const isOnFinished = id ? finished.some(book => book.id === id) : false;
 
-  const imgLink = selectedSuggestion?.cover
-                  ? `https://covers.openlibrary.org/b/id/${selectedSuggestion.cover}-M.jpg`
+  const imgLink = passedEdition?.covers?.[0]?`https://covers.openlibrary.org/b/id/${passedEdition?.covers?.[0]}-M.jpg`
+                  : selectedSuggestion?.cover? `https://covers.openlibrary.org/b/id/${selectedSuggestion.cover}-M.jpg`
                   : null;
 
   function handleStatusChange(status: StatusType) {
@@ -125,16 +143,25 @@ export default function BookDetailsPage() {
           {/* Book Infos */}
           <div className={styles.bookDetails}>
             <div className={styles.titleWrapper}>
-              <h1 className={styles.title}>{displayBook.title}</h1>
+              <h1 className={styles.title}>{passedEdition?.title || displayBook.title}</h1>
             </div>
 
-            <h2 className={styles.author}>{selectedSuggestion?.author_name?.join(', ') || 'Author unknown'}</h2>
-            <p>{getDescription(detailedBook?.description)}</p>
+            <h2
+              className={styles.author}
+              onClick={() => {
+                const authorKey = detailedBook?.authors?.[0].author?.key;
+                if (authorKey) navigate(`${authorKey}`);
+              }}
+              style={{ cursor: detailedBook ? 'pointer' : 'default' }}
+            >
+              {detailedAuthors?.map(authorName => authorName.name).join(', ') || selectedSuggestion?.author_name?.join(', ') || 'Author unknown'}
+            </h2>
+            <p>{getDescription(passedEdition?.description || detailedBook?.description)}</p>
 
             <div className={styles.infoWrapper}>
-              <p><span  className={styles.info}>Pages: </span>{ detailedEditions?.[0]?.number_of_pages || 'unknown' }</p>
-              <p><span  className={styles.info}>Published: </span>{ selectedSuggestion?.year || 'unknown' }</p>
-              <p><span  className={styles.info}>ISBN13: </span>{ detailedEditions?.[0]?.isbn_13?.[0] || 'unknown' }</p>
+              <p><span  className={styles.info}>Pages: </span>{ passedEdition?.number_of_pages || detailedEditions?.[0]?.number_of_pages || 'unknown' }</p>
+              <p><span  className={styles.info}>Published: </span>{ passedEdition?.publish_date || selectedSuggestion?.year || 'unknown' }</p>
+              <p><span  className={styles.info}>ISBN13: </span>{ passedEdition?.isbn_13?.[0] || detailedEditions?.[0]?.isbn_13?.[0] || 'unknown' }</p>
               <p><span  className={styles.info}>Language: </span>{
                 detailedEditions?.[0]?.languages?.[0]?.key
                   ? detailedEditions[0].languages[0].key.replace('/languages/', '')

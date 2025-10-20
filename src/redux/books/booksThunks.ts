@@ -4,8 +4,9 @@ import {
   fetchSuggestions,
   fetchBookDetails,
   fetchEditions,
+  fetchAuthors
 } from '../../API/api';
-import { Book, RawApiDoc, RawEditionApiDoc } from './bookTypes';
+import { Book, RawApiDoc, RawEditionApiDoc, AuthorApiDoc } from './bookTypes';
 import { mapRawDocToBook } from '../../utils/bookUtils'
 
 interface FetchBooksResponse {
@@ -132,6 +133,23 @@ export const fetchEditionsThunk = createAsyncThunk<
   try {
     const rawEditions: RawEditionApiDoc[] = await fetchEditions(workId);
     return rawEditions;
+  } catch (error: unknown) {
+    return rejectWithValue(
+      error instanceof Error ? error.message : 'An unkown error occured'
+    );
+  }
+});
+
+// Thunk for fetching one or more authors of a specific work
+export const fetchAuthorsThunk = createAsyncThunk<
+  AuthorApiDoc[],
+  string[],
+  { rejectValue: string }
+>('books/fetchAuthors',
+  async (authorKeys: string[], { rejectWithValue }) => {
+  try {
+    const data: AuthorApiDoc[] = await fetchAuthors(authorKeys);
+    return data;
   } catch (error: unknown) {
     return rejectWithValue(
       error instanceof Error ? error.message : 'An unkown error occured'

@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import BookList from "../BookList/BookList";
 import { Book } from "../../redux/books/bookTypes";
+import styles from "./AuthorDetailsPage.module.css"
 
 export default function AuthorDetailsPage() {
   const { authorKey } = useParams()
@@ -57,20 +58,20 @@ export default function AuthorDetailsPage() {
 
   return (
     <>
-      <div>
+      <div className={styles.wrapper}>
+        <h1 className={styles.title}>{author?.name}</h1>
         {authorImg ? (
-          <img src={authorImg} alt="author image" />
+          <img src={authorImg} alt="author image" className={styles.authorImage}/>
         ) : (
-          <p>No image available</p>
+          ''
         )}
-        <p>{author?.name}</p>
+        {author?.death_date && (
+          <p className={styles.info}>Born: {author?.birth_date}</p>
+        )}
+        {author?.death_date && (
+          <p className={styles.info}>Died: {author?.death_date}</p>
+        )}
         <p>{bioText || 'No Biography available'}</p>
-        {author?.death_date && (
-          <p>Born: {author?.birth_date}</p>
-        )}
-        {author?.death_date && (
-          <p>Died: {author?.death_date}</p>
-        )}
       </div>
       <BookList
         books={books}

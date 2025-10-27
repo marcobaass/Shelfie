@@ -92,7 +92,7 @@ export default function BookList({
 
   return (
     <div>
-      {numFound > 0 && <p style={{marginTop: '1rem'}}>Found {numFound} results:</p>}
+      {numFound > 0 && <p className={styles.numFoundBooks}>Found {numFound} results:</p>}
 
       <ul>
         {books.map((book) => {

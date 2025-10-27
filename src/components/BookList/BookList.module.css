@@ -26,6 +26,12 @@ h3, p {
   margin: 0;
 }
 
+p.numFoundBooks {
+  text-align: center;
+  margin: 4em 0 2em;
+  font-weight: 600;
+}
+
 .pagination {
   margin-inline: var(--gap-m);
 }

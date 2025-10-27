@@ -180,15 +180,15 @@ console.log(detailedAuthors);
           {/* Subjects */}
           <div className={styles.genres}>
             {filteredSubjects.displayedSubjects.map((displayedSub: string) => (
-              <p
+              <button
                 key={displayedSub}
                 onClick={() => (
-                  navigate(`/search?q=subject=${displayedSub}`)
+                  navigate(`/search?q=subject=${encodeURIComponent(displayedSub)}`)
                 )}
-                style={{ cursor: 'pointer' }}
+                className={styles.subjectButton}
               >
                 {displayedSub}
-              </p>
+              </button>
               ))
             }
           </div>

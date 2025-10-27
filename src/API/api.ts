@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { RawApiDoc, RawEditionApiDoc, AuthorApiDoc } from '../redux/books/bookTypes';
+import { RawApiDoc, RawEditionApiDoc, AuthorApiDoc, AuthorWorksResponse } from '../redux/books/bookTypes';
 
 const API_URL = 'https://openlibrary.org';
 
@@ -102,5 +102,24 @@ export const fetchAuthors = async (authorKeys: string[]): Promise<AuthorApiDoc[]
   } catch (error) {
     console.error('Failed to fetch authors:', error);
     throw new Error('Failed to fetch authors');
+  }
+};
+
+/**
+ * Fetches multiple authors works using their unique keys.
+ * @param authorKeys Array of books
+ * @returns A promise that resolves to an array of book objects.
+ */
+export const fetchAuthorWorks = async (authorKey: string, page: number): Promise<AuthorWorksResponse> => {
+  try {
+    const url = `${API_URL}/authors/${authorKey.replace('/authors/', '')}/works.json?limit=10&offset=${(page - 1) * 10}`;
+    console.log('Fetching URL:', url);  // ← Add this
+    console.log('authorKey:', authorKey);  // ← And this
+
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error){
+    console.error('Failed to fetch author works:', error);
+    throw new Error('Failed to fetch author works');
   }
 };

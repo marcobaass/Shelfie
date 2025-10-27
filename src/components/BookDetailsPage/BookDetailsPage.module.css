@@ -17,8 +17,14 @@ h1.title {
 
 h2.author {
   font-size: var(--fs--1);
-  text-decoration: underline;
   margin-top: 0.175em;
+  text-decoration: none;
+}
+
+.authorSpan {
+  text-decoration: underline;
+  cursor: pointer;
+  padding-right: 0.35em;
 }
 
 .navIconTrans {

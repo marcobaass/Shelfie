@@ -14,6 +14,7 @@ import BookIcon from '../../assets/icons/bookIcon.svg?react';
 import FinishIcon from '../../assets/icons/finishIcon.svg?react';
 import placeholderImg from '../../assets/images/book-stack.png';
 import EditionsCarousel from '../EditionsCarousel/EditionsCarousel';
+import AuthorDetailsPage from '../AuthorDetailsPage/AuthorDetailsPage';
 
 export default function BookDetailsPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -94,6 +95,9 @@ console.log(detailedAuthors);
 
   const filteredSubjects = splitSubjects(detailedBook?.subjects || [], 8)
 
+  console.log(detailedBook);
+
+
   return (
     <div>
       {displayBook ? (
@@ -146,7 +150,7 @@ console.log(detailedAuthors);
               <h1 className={styles.title}>{passedEdition?.title || displayBook.title}</h1>
             </div>
 
-            <h2
+            {/* <h2
               className={styles.author}
               onClick={() => {
                 const authorKey = detailedBook?.authors?.[0].author?.key;
@@ -155,7 +159,25 @@ console.log(detailedAuthors);
               style={{ cursor: detailedBook ? 'pointer' : 'default' }}
             >
               {detailedAuthors?.map(authorName => authorName.name).join(', ') || selectedSuggestion?.author_name?.join(', ') || 'Author unknown'}
+            </h2> */}
+
+            <h2 className={styles.author}>
+              {detailedAuthors?.map((author, index) => (
+                  <span key={index}
+                    onClick={() => {
+                      const authorKey = detailedBook?.authors?.[index].author?.key;
+                      if (authorKey) navigate(`${authorKey}`);
+                    }}
+                    className={styles.authorSpan}
+                  >
+                  {author.name}
+                  {index < detailedAuthors.length - 1 && (
+                    ','
+                  )}
+                  </span>
+              ))}
             </h2>
+
             <p>{getDescription(passedEdition?.description || detailedBook?.description)}</p>
 
             <div className={styles.infoWrapper}>

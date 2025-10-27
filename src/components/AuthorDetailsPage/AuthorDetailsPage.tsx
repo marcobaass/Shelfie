@@ -1,32 +1,85 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../../redux/store'
-import { AuthorApiDoc } from '@/redux/books/bookTypes';
-import styles from './AuthorDetailsPage.module.css';
-import { useParams, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { fetchAuthorsThunk } from "../../redux/books/booksThunks";
+import { fetchAuthorsThunk, fetchAuthorWorksThunk } from "../../redux/books/booksThunks";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import BookList from "../BookList/BookList";
+import { Book } from "../../redux/books/bookTypes";
 
 export default function AuthorDetailsPage() {
-  const dispatch = useDispatch<AppDispatch>();
-  const { id } = useParams();
-  const location = useLocation();
+  const { authorKey } = useParams()
+  console.log(authorKey);
+  const [page, setPage] = useState(1);
 
+  const dispatch = useDispatch<AppDispatch>()
+  const authorData = useSelector((state: RootState) => state.authors.authors)
 
-  const detailedAuthor = useSelector((state: RootState): AuthorApiDoc | null => state.authors.detailedAuthor);
-  const detailsLoading = useSelector((state: RootState): boolean => state.suggestions.detailsLoading);
+  useEffect(() => {
+    if (!authorKey) return
+    dispatch(fetchAuthorsThunk([authorKey]))
+  }, [authorKey, dispatch])
 
-  if (detailsLoading) {
-    return <p>Loading author details...</p>;
+  useEffect(() => {
+    if(!authorKey) return
+    dispatch(fetchAuthorWorksThunk({authorKey, page}))
+  }, [authorKey, dispatch, page])
+
+  const author = authorData[0]
+
+  const authorWorks = useSelector((state: RootState) => state.authors.authorWorks)
+  const navigate = useNavigate()
+
+  if (!author) {
+    return <p>Loading author...</p>;
   }
 
-  // todo
-  const imgLink = passedEdition?.covers?.[0]?`https://covers.openlibrary.org/b/id/${passedEdition?.covers?.[0]}-M.jpg`
-                  : selectedSuggestion?.cover? `https://covers.openlibrary.org/b/id/${selectedSuggestion.cover}-M.jpg`
-                  : null;
+  const bioText = typeof author.bio === 'string' ? author.bio : author.bio?.value;
+  const authorImg = author?.photos?.[0]?`https://covers.openlibrary.org/a/id/${author?.photos?.[0]}-M.jpg` : null
+
+
+  const books: Book[] = authorWorks?.entries.map(entry => ({
+    id: entry.key.replace('/works/', ''),
+    title: entry.title,
+    author_name:[author.name],
+    cover: entry.covers?.[0],
+    year: entry.first_publish_year
+  })) ?? [];
+
+  const numFound = authorWorks?.size ?? 0;
+  const booksPerPage = 10;
+  const totalPages = Math.ceil(numFound / booksPerPage);
+
+
+
+  const onBookClick = (book: Book) => {
+    navigate(`/book/${book.id}`)
+  }
 
   return (
-    <div>
-      Hello World
-    </div>
+    <>
+      <div>
+        {authorImg ? (
+          <img src={authorImg} alt="author image" />
+        ) : (
+          <p>No image available</p>
+        )}
+        <p>{author?.name}</p>
+        <p>{bioText || 'No Biography available'}</p>
+        {author?.death_date && (
+          <p>Born: {author?.birth_date}</p>
+        )}
+        {author?.death_date && (
+          <p>Died: {author?.death_date}</p>
+        )}
+      </div>
+      <BookList
+        books={books}
+        onBookClick={onBookClick}
+        page={page}
+        setPage={setPage}
+        numFound={numFound}
+        totalPages={totalPages}
+      />
+    </>
   )
 }

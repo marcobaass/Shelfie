@@ -1,21 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchAuthorsThunk } from './booksThunks';
-import { AuthorApiDoc } from './bookTypes';
+import { fetchAuthorsThunk, fetchAuthorWorksThunk,  } from './booksThunks';
+import { AuthorApiDoc, AuthorWorksResponse } from './bookTypes';
 
 export interface AuthorsState {
   authors: AuthorApiDoc[];
   authorsLoading: boolean;
+  authorWorks: AuthorWorksResponse | null;
+  worksLoading: boolean;
   error: string | null;
 }
 
 const initialState: AuthorsState = {
   authors: [],
   authorsLoading: false,
+  authorWorks: null,
+  worksLoading: false,
   error: null,
 };
 
 const authorsSlice = createSlice({
-  name: 'authors',
+  name: 'authorsWorks',
   initialState,
   reducers: {
 
@@ -33,6 +37,19 @@ const authorsSlice = createSlice({
       })
       .addCase(fetchAuthorsThunk.rejected, (state, action) => {
         state.authorsLoading = false;
+        state.error = action.payload as string;
+      })
+
+      .addCase(fetchAuthorWorksThunk.pending, (state) => {
+        state.worksLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchAuthorWorksThunk.fulfilled, (state, action) => {
+        state.authorWorks = action.payload;
+        state.worksLoading = false;
+      })
+      .addCase(fetchAuthorWorksThunk.rejected, (state, action) => {
+        state.worksLoading = false;
         state.error = action.payload as string;
       })
   },

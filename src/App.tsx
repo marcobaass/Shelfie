@@ -10,6 +10,7 @@ import ReadingPage from './components/ReadingPage/ReadingPage';
 import FinishedPage from './components/FinishedPage/FinishedPage';
 import SearchListPage from './components/SearchListPage/SearchListPage';
 import BookDetailsPage from './components/BookDetailsPage/BookDetailsPage';
+import AuthorDetailsPage from './components/AuthorDetailsPage/AuthorDetailsPage';
 
 const App: React.FC = () => {
 
@@ -23,6 +24,7 @@ const App: React.FC = () => {
           <Route path="finished" element={<FinishedPage />} />
           <Route path="search" element={<SearchListPage />} />
           <Route path="book/:id" element={<BookDetailsPage />} />
+          <Route path="authors/:authorKey" element={<AuthorDetailsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

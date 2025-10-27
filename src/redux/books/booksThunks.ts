@@ -4,9 +4,10 @@ import {
   fetchSuggestions,
   fetchBookDetails,
   fetchEditions,
-  fetchAuthors
+  fetchAuthors,
+  fetchAuthorWorks
 } from '../../API/api';
-import { Book, RawApiDoc, RawEditionApiDoc, AuthorApiDoc } from './bookTypes';
+import { Book, RawApiDoc, RawEditionApiDoc, AuthorApiDoc, AuthorWorksResponse } from './bookTypes';
 import { mapRawDocToBook } from '../../utils/bookUtils'
 
 interface FetchBooksResponse {
@@ -156,3 +157,22 @@ export const fetchAuthorsThunk = createAsyncThunk<
     );
   }
 });
+
+// Thunk for fetching works of a specific author
+export const fetchAuthorWorksThunk = createAsyncThunk<
+  AuthorWorksResponse,
+  {authorKey: string, page: number},
+  { rejectValue: string }
+>('books/fetchAuthorsWork',
+  async ({authorKey, page}, { rejectWithValue }) => {
+    try {
+      const data: AuthorWorksResponse = await fetchAuthorWorks(authorKey, page);
+      return data;
+
+    } catch (error: unknown) {
+      return rejectWithValue(
+        error instanceof Error ? error.message : 'An unkown error occured'
+      );
+    }
+  }
+)

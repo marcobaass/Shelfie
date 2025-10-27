@@ -112,3 +112,38 @@ export interface AuthorApiDoc {
     type: { key: string };
   }>;
 }
+
+// Types for Authors Works
+export interface AuthorWorksResponse {
+  links: {
+    self: string;
+    author: string;
+    next?: string;
+  };
+  size: number;
+  entries: AuthorWorkEntry[];
+}
+
+export interface AuthorWorkEntry {
+  type: {
+    key: string;
+  };
+  title: string;
+  authors: Array<{
+    type: {
+      key: string;
+    };
+    author: {
+      key: string;
+    };
+  }>;
+  key: string;
+  latest_revision?: number;
+  revision?: number;
+  created?: {
+    type: string;
+    value: string;
+  };
+  covers?: number[];
+  first_publish_year: number;
+}

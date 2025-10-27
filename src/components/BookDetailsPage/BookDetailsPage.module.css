@@ -88,5 +88,5 @@ button.subjectButton {
   border: none;
   padding: 0;
   font: inherit;
-  color: black;
+  color: var(--clr-text);
 }

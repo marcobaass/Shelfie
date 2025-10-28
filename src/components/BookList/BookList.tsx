@@ -113,14 +113,14 @@ export default function BookList({
                 style={{ display: loadedCovers[book.id] ? 'none' : 'block' }}
               />
               {book.cover && (
-                  <img
-                    key={book.id}
-                    className={styles.covers}
-                    src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
-                    alt={`${book.title} cover`}
-                    onLoad={() => handleCoverLoad(book.id)}
-                    onError={() => handleCoverError(book.id)}
-                  />
+                <img
+                  key={book.id}
+                  className={styles.covers}
+                  src={`https://covers.openlibrary.org/b/id/${book.cover}-M.jpg`}
+                  alt={`${book.title} cover`}
+                  onLoad={() => handleCoverLoad(book.id)}
+                  onError={() => handleCoverError(book.id)}
+                />
                )}
               <div className={styles.tileAndAuthor}>
                 <h3 className={styles.truncatedText}>{book.title}</h3>

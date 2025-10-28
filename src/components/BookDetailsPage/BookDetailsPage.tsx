@@ -117,6 +117,7 @@ console.log(detailedAuthors);
                 onLoad = {() => setIsCoverLoaded(true)}
                 onError={() => setIsCoverLoaded(false)}
                 style = {{ display: isCoverLoaded ? 'block' : 'none' }}
+                className={styles.img}
               />
             )}
 

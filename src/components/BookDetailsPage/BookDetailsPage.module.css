@@ -45,6 +45,10 @@ h2.author {
   transition: scale 0.125s ease-in-out;
 }
 
+.img {
+  cursor: default;
+}
+
 .titleWrapper {
   display: flex;
   align-items: center;

@@ -71,9 +71,17 @@ console.log(detailedAuthors);
   const isOnReading = id ? reading.some(book => book.id === id) : false;
   const isOnFinished = id ? finished.some(book => book.id === id) : false;
 
-  const imgLink = passedEdition?.covers?.[0]?`https://covers.openlibrary.org/b/id/${passedEdition?.covers?.[0]}-M.jpg`
-                  : selectedSuggestion?.cover? `https://covers.openlibrary.org/b/id/${selectedSuggestion.cover}-M.jpg`
-                  : null;
+  const imgLink = passedEdition?.covers?.[0]
+    ? `https://covers.openlibrary.org/b/id/${passedEdition.covers[0]}-M.jpg`
+    : selectedSuggestion?.cover
+      ? `https://covers.openlibrary.org/b/id/${selectedSuggestion.cover}-M.jpg`
+      : detailedBook?.covers?.[0]  // ← Add this!
+        ? `https://covers.openlibrary.org/b/id/${detailedBook.covers[0]}-M.jpg`
+        : detailedBook?.cover_i
+          ? `https://covers.openlibrary.org/b/id/${detailedBook.cover_i}-M.jpg`
+          : detailedBook?.cover
+            ? `https://covers.openlibrary.org/b/id/${detailedBook.cover}-M.jpg`
+            : null;
 
   function handleStatusChange(status: StatusType) {
     if(!id || !displayBook) return;
@@ -93,6 +101,10 @@ console.log(detailedAuthors);
   }
 
   const filteredSubjects = splitSubjects(detailedBook?.subjects || [], 8)
+
+  console.log('detailedBook:', detailedBook);
+console.log('imgLink:', imgLink);
+console.log('isCoverLoaded:', isCoverLoaded);
 
 
   return (

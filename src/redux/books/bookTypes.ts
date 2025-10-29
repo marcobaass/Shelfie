@@ -19,7 +19,7 @@ export interface RawApiDoc {
   author_name?: string[];
   cover_i?: number;
   cover?: number;
-  covers?: string[];
+  covers?: number[];
   first_publish_year?: number;
   year?: number;
   synopsis?: string;

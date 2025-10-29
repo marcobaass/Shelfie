@@ -5,7 +5,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import BookList from "../BookList/BookList";
 import { Book } from "../../redux/books/bookTypes";
-import styles from "./AuthorDetailsPage.module.css"
+import styles from "./AuthorDetailsPage.module.css";
+import { setSelectedSuggestion } from "../../redux/books/suggestionsSlice";
 
 export default function AuthorDetailsPage() {
   const { authorKey } = useParams()
@@ -53,6 +54,7 @@ export default function AuthorDetailsPage() {
 
 
   const onBookClick = (book: Book) => {
+    dispatch(setSelectedSuggestion(book));
     navigate(`/book/${book.id}`)
   }
 

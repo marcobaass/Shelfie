@@ -29,6 +29,7 @@ const authorsSlice = createSlice({
       .addCase(fetchAuthorsThunk.pending, (state) => {
         state.authorsLoading = true;
         state.error = null;
+        state.authors = [];
       })
       .addCase(fetchAuthorsThunk.fulfilled, (state, action) => {
         const authorsDocs = action.payload ?? [];

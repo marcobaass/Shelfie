@@ -63,6 +63,7 @@ const suggestionsSlice = createSlice({
       .addCase(fetchBookDetailsThunk.pending, (state) => {
         state.detailsLoading = true;
         state.error = null;
+        state.detailedBook = null;
       })
       .addCase(fetchBookDetailsThunk.fulfilled, (state, action) => {
         state.detailedBook = action.payload;
@@ -78,6 +79,7 @@ const suggestionsSlice = createSlice({
       .addCase(fetchEditionsThunk.pending, (state) => {
         state.editionsLoading = true;
         state.error = null;
+        state.detailedEditions = [];
       })
       .addCase(fetchEditionsThunk.fulfilled, (state, action) => {
         state.detailedEditions = action.payload;

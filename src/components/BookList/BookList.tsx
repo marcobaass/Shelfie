@@ -153,7 +153,7 @@ export default function BookList({
                   }}
                 />
                 <hr></hr>
-                {book.year && `${book.year}`} {/* Optionally show year */}
+                <p className={styles.bookYear}>{book.year && `${book.year}`}</p>
               </p>
             </li>
           );

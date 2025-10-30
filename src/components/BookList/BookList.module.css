@@ -57,6 +57,10 @@ p.numFoundBooks {
   margin-left: auto;
 }
 
+.bookYear {
+  text-align: center;
+}
+
 .navIconTrans {
   fill: transparent;
   height: calc((var(--fs-nav-s)) * 0.75);

@@ -11,10 +11,20 @@ import { setSelectedSuggestion } from "../../redux/books/suggestionsSlice";
 export default function AuthorDetailsPage() {
   const { authorKey } = useParams()
   console.log(authorKey);
-  const [page, setPage] = useState(1);
+  const [allBooks, setAllBooks] = useState<Book[]>([]);
+  const [pagesLoaded, setPagesLoaded] = useState(1);
 
   const dispatch = useDispatch<AppDispatch>()
   const authorData = useSelector((state: RootState) => state.authors.authors)
+
+  const authorWorks = useSelector((state: RootState) => state.authors.authorWorks)
+  const navigate = useNavigate()
+  const author = authorData[0]
+
+  useEffect(() => {
+    setAllBooks([]);
+    setPagesLoaded(1);
+  }, [authorKey])
 
   useEffect(() => {
     if (!authorKey) return
@@ -23,13 +33,34 @@ export default function AuthorDetailsPage() {
 
   useEffect(() => {
     if(!authorKey) return
-    dispatch(fetchAuthorWorksThunk({authorKey, page}))
-  }, [authorKey, dispatch, page])
+    dispatch(fetchAuthorWorksThunk({authorKey, page: pagesLoaded}))
+  }, [authorKey, dispatch, pagesLoaded])
 
-  const author = authorData[0]
 
-  const authorWorks = useSelector((state: RootState) => state.authors.authorWorks)
-  const navigate = useNavigate()
+  useEffect(() => {
+    if (authorWorks?.entries && author) {
+      const newBooks: Book[] = authorWorks.entries
+        .filter(entry => entry.covers && entry.covers.length > 0)
+        .map(entry => ({
+          id: entry.key.replace('/works/', ''),
+          title: entry.title,
+          author_name: [author.name],
+          cover: entry.covers?.[0],
+        }));
+
+        if (pagesLoaded === 1) {
+          setAllBooks(newBooks)
+        } else {
+          setAllBooks(prevAllBooks => [...prevAllBooks, ...newBooks])
+        }
+
+        if (newBooks.length === 0 && (pagesLoaded * 10) < authorWorks.size) {
+          setPagesLoaded(prev => prev + 1);
+        }
+    }
+  }, [authorWorks, author, pagesLoaded])
+
+
 
   if (!author) {
     return <p>Loading author...</p>;
@@ -37,21 +68,6 @@ export default function AuthorDetailsPage() {
 
   const bioText = typeof author.bio === 'string' ? author.bio : author.bio?.value;
   const authorImg = author?.photos?.[0]?`https://covers.openlibrary.org/a/id/${author?.photos?.[0]}-M.jpg` : null
-
-
-  const books: Book[] = authorWorks?.entries.map(entry => ({
-    id: entry.key.replace('/works/', ''),
-    title: entry.title,
-    author_name:[author.name],
-    cover: entry.covers?.[0],
-    year: entry.first_publish_year
-  })) ?? [];
-
-  const numFound = authorWorks?.size ?? 0;
-  const booksPerPage = 10;
-  const totalPages = Math.ceil(numFound / booksPerPage);
-
-
 
   const onBookClick = (book: Book) => {
     dispatch(setSelectedSuggestion(book));
@@ -76,13 +92,15 @@ export default function AuthorDetailsPage() {
         <p>{bioText || 'No Biography available'}</p>
       </div>
       <BookList
-        books={books}
+        books={allBooks}
         onBookClick={onBookClick}
-        page={page}
-        setPage={setPage}
-        numFound={numFound}
-        totalPages={totalPages}
       />
+      {/* Load More button */}
+      {authorWorks && (pagesLoaded * 10) < authorWorks.size && (
+        <button onClick={() => setPagesLoaded(pagesLoaded + 1)}>
+          Load More Books
+        </button>
+      )}
     </>
   )
 }

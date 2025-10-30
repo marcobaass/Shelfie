@@ -31,7 +31,6 @@ export default function WishListPage() {
     <div>
       <h1>My Wishlist</h1>
       <BookList
-        // books={wishlist}
         books={paginatedBooks}
         onBookClick={handleBookClick}
         isLoading={false}

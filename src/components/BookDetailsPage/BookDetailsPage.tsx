@@ -181,7 +181,14 @@ console.log('isCoverLoaded:', isCoverLoaded);
 
             <div className={styles.infoWrapper}>
               <p><span  className={styles.info}>Pages: </span>{ passedEdition?.number_of_pages || detailedEditions?.[0]?.number_of_pages || 'unknown' }</p>
-              <p><span  className={styles.info}>Published: </span>{ passedEdition?.publish_date || selectedSuggestion?.year || 'unknown' }</p>
+              <p><span className={styles.info}>Published: </span>
+                {
+                  passedEdition?.publish_date ||
+                  detailedBook?.first_publish_year ||
+                  selectedSuggestion?.year ||
+                  'unknown'
+                }
+              </p>
               <p><span  className={styles.info}>ISBN13: </span>{ passedEdition?.isbn_13?.[0] || detailedEditions?.[0]?.isbn_13?.[0] || 'unknown' }</p>
               <p><span  className={styles.info}>Language: </span>{
                 detailedEditions?.[0]?.languages?.[0]?.key

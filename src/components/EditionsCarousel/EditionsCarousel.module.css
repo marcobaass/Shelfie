@@ -1,5 +1,8 @@
 .editionWrapper {
+  display: grid;
   padding-bottom: 1em;
+  justify-content: center;
+  justify-items: center;
 }
 
 .covers {

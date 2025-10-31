@@ -94,7 +94,7 @@ export default function BookList({
     <div>
       {numFound > 0 && <p className={styles.numFoundBooks}>Found {numFound} results:</p>}
 
-      <ul>
+      <ul className={styles.bookList}>
         {books.map((book) => {
           const isOnWishlist = wishlist.some(b => b.id === book.id);
           const isOnReading = reading.some(b => b.id === book.id);

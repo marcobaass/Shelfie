@@ -38,6 +38,9 @@ export default function AuthorDetailsPage() {
   const bioText = typeof author.bio === 'string' ? author.bio : author.bio?.value;
   const authorImg = author?.photos?.[0]?`https://covers.openlibrary.org/a/id/${author?.photos?.[0]}-M.jpg` : null
 
+  console.log(authorWorks);
+
+
 
   const books: Book[] = authorWorks?.entries?.map(entry => ({
     id: entry.key.replace('/works/', ''),

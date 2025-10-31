@@ -28,7 +28,6 @@ export default function AuthorDetailsPage() {
   const author = authorData[0]
 
   const authorWorks = useSelector((state: RootState) => state.authors.authorWorks)
-  console.log(authorWorks);
 
   const navigate = useNavigate()
 

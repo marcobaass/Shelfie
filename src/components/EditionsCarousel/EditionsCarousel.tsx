@@ -68,7 +68,7 @@ export default function EditionsCarousel({detailedBook, detailedEditions}: Editi
 
   return (
     <div className={styles.carouselWrapper}>
-      <h4>more editions:</h4>
+      <h4 className={styles.editionsHeadline}>more editions:</h4>
 
 
       <Carousel

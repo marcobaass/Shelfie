@@ -8,6 +8,7 @@ h3, p {
 }
 
 p.numFoundBooks {
+  display: inline-block;
   text-align: center;
   margin: 4em 0 2em;
   font-weight: 600;
@@ -59,8 +60,11 @@ p.numFoundBooks {
 }
 
 ul.bookList {
+  display: inline-block;
   padding-inline-start: 0;
-  max-width: 1280px;
+  width: 1280px;
+  max-width: 100%;
+  margin-top: var(--gap-m);
 }
 
 li.booklist {

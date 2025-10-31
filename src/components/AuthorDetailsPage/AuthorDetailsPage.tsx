@@ -10,7 +10,6 @@ import { setSelectedSuggestion } from "../../redux/books/suggestionsSlice";
 
 export default function AuthorDetailsPage() {
   const { authorKey } = useParams()
-  console.log(authorKey);
   const [page, setPage] = useState(1);
 
   const dispatch = useDispatch<AppDispatch>()
@@ -29,6 +28,8 @@ export default function AuthorDetailsPage() {
   const author = authorData[0]
 
   const authorWorks = useSelector((state: RootState) => state.authors.authorWorks)
+  console.log(authorWorks);
+
   const navigate = useNavigate()
 
   if (!author) {
@@ -38,17 +39,12 @@ export default function AuthorDetailsPage() {
   const bioText = typeof author.bio === 'string' ? author.bio : author.bio?.value;
   const authorImg = author?.photos?.[0]?`https://covers.openlibrary.org/a/id/${author?.photos?.[0]}-M.jpg` : null
 
-  console.log(authorWorks);
-
-
-
   const books: Book[] = authorWorks?.entries?.map(entry => ({
-    id: entry.key.replace('/works/', ''),
-    title: entry.title,
-    author_name:[author.name],
-    cover: entry.covers?.[0],
-    year: entry.first_publish_year
-  })) ?? [];
+  id: entry.key.replace('/works/', ''),
+  title: entry.title,
+  author_name: [author.name],
+  cover: entry.covers?.[0]
+})) ?? [];
 
   const numFound = authorWorks?.size ?? 0;
   const booksPerPage = 10;

@@ -40,5 +40,17 @@ p {
   max-height: 10vw;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%)
+  transform: translate(-50%, -50%);
+}
+
+@media screen and (max-width: 480px) {
+  .authorImage{
+    max-width: 35vw;
+  }
+
+  p.descriptionText {
+    overflow-wrap: break-word;
+    word-wrap: break-word; /* for older browsers */
+    word-break: break-word;
+  }
 }

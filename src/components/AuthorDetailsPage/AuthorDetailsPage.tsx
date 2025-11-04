@@ -76,7 +76,7 @@ export default function AuthorDetailsPage() {
         {author?.death_date && (
           <p className={styles.info}>Died: {author?.death_date}</p>
         )}
-        <p>{bioText || 'No Biography available'}</p>
+        <p className={styles.descriptionText}>{bioText || 'No Biography available'}</p>
       </div>
       <BookList
         books={books}

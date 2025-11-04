@@ -10,7 +10,7 @@ h3, p {
 p.numFoundBooks {
   display: inline-block;
   text-align: center;
-  margin: 4em 0 2em;
+  margin: 0 0 2em;
   font-weight: 600;
 }
 
@@ -64,7 +64,6 @@ ul.bookList {
   padding-inline-start: 0;
   width: 1280px;
   max-width: 100%;
-  margin-top: var(--gap-m);
 }
 
 li.booklist {
@@ -113,4 +112,31 @@ li.booklist:hover {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+@media screen and (max-width: 500px) {
+  h3 {
+    font-size: var(--fs-1);
+  }
+
+  li.booklist {
+    height: auto;
+  }
+
+  img {
+    height: 80px;
+  }
+
+  .iconsAndYear {
+    display: grid;
+    height: 80px;
+    grid-template-rows: 1fr 1fr 1fr;
+    justify-items: center;
+    align-items: center;
+  }
+
+  .bookYear,
+  .iconsAndYear hr {
+    display: none;
+  }
 }

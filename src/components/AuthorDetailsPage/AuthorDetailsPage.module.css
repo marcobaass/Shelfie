@@ -54,3 +54,9 @@ p {
     word-break: break-word;
   }
 }
+
+@media screen and (max-width: 480px) {
+  .authorImage{
+    max-width: 35vw;
+  }
+}

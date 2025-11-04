@@ -114,6 +114,15 @@ li.booklist:hover {
   transform: translate(-50%, -50%);
 }
 
+.prevText::before {
+  content: "Previous";
+}
+
+.nextText::before {
+  content: "Next";
+}
+
+
 @media screen and (max-width: 500px) {
   h3 {
     font-size: var(--fs-1);
@@ -123,14 +132,13 @@ li.booklist:hover {
     height: auto;
   }
 
-  img {
+  li.booklist img {
     height: 80px;
   }
 
   .iconsAndYear {
     display: grid;
     height: 80px;
-    grid-template-rows: 1fr 1fr 1fr;
     justify-items: center;
     align-items: center;
   }
@@ -138,5 +146,19 @@ li.booklist:hover {
   .bookYear,
   .iconsAndYear hr {
     display: none;
+  }
+
+  .prevText::before {
+    content: "<";
+    font-size: var(--fs-nav-s);
+  }
+
+  .nextText::before {
+    content: ">";
+    font-size: var(--fs-nav-s);
+  }
+
+  .pagination {
+    margin-inline: 0;
   }
 }

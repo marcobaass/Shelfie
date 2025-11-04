@@ -173,7 +173,7 @@ export default function BookList({
               disabled={page <= 1}
               className={styles.paginationButton}
             >
-              <p>Previous</p>
+              <p className={styles.prevText}></p>
             </button>
             <span style={{margin: '3rem'}}>Page {page}</span>
             <button
@@ -181,7 +181,7 @@ export default function BookList({
               disabled={!totalPages || page >= totalPages}
               className={styles.paginationButton}
             >
-              <p>Next</p>
+              <p className={styles.nextText}></p>
             </button>
           </div>
         )}

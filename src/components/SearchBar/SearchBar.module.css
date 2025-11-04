@@ -107,3 +107,9 @@
 .suggestions > li:not(:last-child) {
   border-bottom: 1px grey solid;
 }
+
+@media screen and (max-width: 480px) {
+  .suggestions > li > p {
+    max-width: 15ch;
+  }
+}

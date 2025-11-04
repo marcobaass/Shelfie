@@ -90,10 +90,3 @@ export default function AuthorDetailsPage() {
   )
 }
 
-// {isSuggestionsLoading && (
-//   <div className={styles.searchGif}>
-//     <img src={searchGif} alt="" />
-//   </div>
-// )}
-
-// import searchGif from "../../assets/search.gif";

@@ -173,7 +173,7 @@ export default function BookList({
               disabled={page <= 1}
               className={styles.paginationButton}
             >
-              <p className={styles.prevText}></p>
+              <p className={styles.prevText} aria-label="Previous page"></p>
             </button>
             <span style={{margin: '3rem'}}>Page {page}</span>
             <button
@@ -181,7 +181,7 @@ export default function BookList({
               disabled={!totalPages || page >= totalPages}
               className={styles.paginationButton}
             >
-              <p className={styles.nextText}></p>
+              <p className={styles.nextText} aria-label="Next page"></p>
             </button>
           </div>
         )}

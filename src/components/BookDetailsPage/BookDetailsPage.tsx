@@ -189,7 +189,7 @@ console.log(detailedAuthors);
               ))}
             </h2>
 
-            <p>{getDescription(passedEdition?.description || detailedBook?.description)}</p>
+            <p className={styles.descriptionText}>{getDescription(passedEdition?.description || detailedBook?.description)}</p>
 
             <div className={styles.infoWrapper}>
               <p><span  className={styles.info}>Pages: </span>{ passedEdition?.number_of_pages || detailedEditions?.[0]?.number_of_pages || 'unknown' }</p>

@@ -72,7 +72,7 @@ export default function EditionsCarousel({detailedBook, detailedEditions}: Editi
 
 
       <Carousel
-        swipeable={false}
+        swipeable={true}
         draggable={false}
         showDots={needDot}
         responsive={responsive}

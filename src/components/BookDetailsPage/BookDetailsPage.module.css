@@ -115,3 +115,19 @@ button.subjectButton {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+@media screen and (max-width: 480px) {
+  .wrapper {
+    flex-direction: column;
+  }
+
+  .wrapper img {
+    margin-inline: auto;
+  }
+
+  p.descriptionText {
+    overflow-wrap: break-word;
+    word-wrap: break-word; /* for older browsers */
+    word-break: break-word;
+  }
+}

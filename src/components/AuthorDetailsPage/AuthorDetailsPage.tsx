@@ -7,6 +7,7 @@ import BookList from "../BookList/BookList";
 import { Book } from "../../redux/books/bookTypes";
 import styles from "./AuthorDetailsPage.module.css";
 import { setSelectedSuggestion } from "../../redux/books/suggestionsSlice";
+import searchGif from "../../assets/search.gif";
 
 export default function AuthorDetailsPage() {
   const { authorKey } = useParams()
@@ -32,7 +33,11 @@ export default function AuthorDetailsPage() {
   const navigate = useNavigate()
 
   if (!author) {
-    return <p>Loading author...</p>;
+    return(
+      <div className={styles.searchGif}>
+        <img src={searchGif} alt="" />
+      </div>
+    )
   }
 
   const bioText = typeof author.bio === 'string' ? author.bio : author.bio?.value;
@@ -84,3 +89,11 @@ export default function AuthorDetailsPage() {
     </>
   )
 }
+
+// {isSuggestionsLoading && (
+//   <div className={styles.searchGif}>
+//     <img src={searchGif} alt="" />
+//   </div>
+// )}
+
+// import searchGif from "../../assets/search.gif";

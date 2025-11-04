@@ -14,6 +14,8 @@ import BookIcon from '../../assets/icons/bookIcon.svg?react';
 import FinishIcon from '../../assets/icons/finishIcon.svg?react';
 import placeholderImg from '../../assets/images/book-stack.png';
 import EditionsCarousel from '../EditionsCarousel/EditionsCarousel';
+import searchGif from "../../assets/search.gif";
+
 
 export default function BookDetailsPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -63,8 +65,16 @@ console.log(detailedAuthors);
     }
   }, [detailedBook, dispatch])
 
+  // if (detailsLoading) {
+  //   return <p>Loading book details...</p>;
+  // }
+
   if (detailsLoading) {
-    return <p>Loading book details...</p>;
+    return(
+      <div className={styles.searchGif}>
+        <img src={searchGif} alt="" />
+      </div>
+    )
   }
 
   const isOnWishlist = id ? wishlist.some(book => book.id === id) : false;

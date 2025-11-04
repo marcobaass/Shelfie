@@ -9,6 +9,8 @@ import HeartIcon from '../../assets/icons/heartIcon.svg?react';
 import BookIcon from '../../assets/icons/bookIcon.svg?react';
 import FinishIcon from '../../assets/icons/finishIcon.svg?react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import searchGif from "../../assets/search.gif";
+
 
 interface BookListProps {
   books: Book[],
@@ -65,8 +67,16 @@ export default function BookList({
     setLoadedCovers(prev => ({...prev, [bookId]: false}))
   }
 
+  // if (isLoading) {
+  //   return <p>Loading search results...</p>;
+  // }
+
   if (isLoading) {
-    return <p>Loading search results...</p>;
+    return(
+      <div className={styles.searchGif}>
+        <img src={searchGif} alt="" />
+      </div>
+    )
   }
 
   if (error) {

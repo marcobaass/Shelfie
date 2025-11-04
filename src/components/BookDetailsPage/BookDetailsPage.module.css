@@ -107,3 +107,11 @@ button.subjectButton {
   text-decoration: underline overline var(--clr-medium);
   color: var(--clr-medium);
 }
+
+.searchGif img {
+  position: absolute;
+  max-height: 10vw;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%)
+}

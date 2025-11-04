@@ -41,7 +41,7 @@ describe('fetchBooksThunk', () => {
       .filter((book): book is Book => book !== null);
 
     // Das Ergebnis von await store.dispatch(thunk) IST die Action
-    const action = await store.dispatch(fetchBooksThunk('react'));
+    const action = await store.dispatch(fetchBooksThunk({ query: 'react' }));
 
     expect(action.type).toBe('search/fetchBooks/fulfilled');
     expect(mockedFetchBooks).toHaveBeenCalledWith('react');
@@ -62,7 +62,7 @@ describe('fetchBooksThunk', () => {
     const errorMessage = 'Network error';
     mockedFetchBooks.mockRejectedValue(new Error(errorMessage));
 
-    const action = await store.dispatch(fetchBooksThunk('react'));
+    const action = await store.dispatch(fetchBooksThunk({ query: 'react' }));
     expect(action.type).toBe('search/fetchBooks/rejected');
 
     // Type Guard für rejected action

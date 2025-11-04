@@ -6,20 +6,36 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 import searchReducer from '../redux/books/searchSlice';
 import suggestionsReducer from '../redux/books/suggestionsSlice'
-import { Book } from '../redux/books/bookTypes';
+// import { Book } from '../redux/books/bookTypes';
 import SearchPage from '../components/SearchListPage/SearchListPage';
 import { fetchBooks, fetchSuggestions } from '../API/api';
+import { RawApiDoc } from '../redux/books/bookTypes';
 
 import { MemoryRouter } from 'react-router-dom';
 
 vi.mock('../API/api');
 
-const mockBookData: Book[] = [
-  { id: '1', title: 'React Testing For Beginners', author_name: ['John Doe'] },
-  { id: '2', title: 'Advanced React Patterns', author_name: ['Jane Smith'] },
+const mockRawDocs: RawApiDoc[] = [
+  {
+    key: "OL1M",
+    title: "React Testing For Beginners",
+    author_name: ["John Doe"], // or whatever the raw API shape uses
+  },
+  {
+    key: "OL2M",
+    title: "Advanced React Patterns",
+    author_name: ["Jane Smith"],
+  },
 ];
-const mockApiResponse = { docs: mockBookData, numFound: mockBookData.length };
-const mockSuggestionsApiResponse = { docs: [{id: 's1', title: 'React Suggestion', author_name: ['Dev']}], numFound: 1 }; // author_name hinzugefügt
+
+const mockApiResponse = {
+  docs: mockRawDocs,
+  numFound: mockRawDocs.length,
+};
+
+const mockSuggestionsApiResponse = [
+  { id: 's1', title: 'React Suggestion', author_name: ['Dev'] }
+];
 
 describe('SearchPage Component - Displaying Results', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -35,12 +51,12 @@ describe('SearchPage Component - Displaying Results', () => {
     store = configureStore({
       reducer: {
         search: searchReducer,
-        suggestions: suggestionsReducer
+        suggestions: suggestionsReducer,
       },
-    });
+  });
 
-    mockedFetchBooks.mockResolvedValue(mockApiResponse);
-    mockedFetchSuggestions.mockResolvedValue(mockSuggestionsApiResponse);
+  mockedFetchBooks.mockResolvedValue(mockApiResponse);
+  mockedFetchSuggestions.mockResolvedValue(mockSuggestionsApiResponse);
   });
 
   it('should display book results after a successful search', async () => {

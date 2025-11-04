@@ -7,6 +7,11 @@ const initialState: SuggestionsState = {
   suggestionsLoading: false,
   error: null,
   selectedSuggestion: null,
+  showSuggestions: false,
+  detailsLoading: false,
+  detailedBook: null,
+  editionsLoading: false,
+  detailedEditions: [],
 };
 
 describe('booksSlice reducer', () => {

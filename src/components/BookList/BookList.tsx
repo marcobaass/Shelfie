@@ -67,14 +67,10 @@ export default function BookList({
     setLoadedCovers(prev => ({...prev, [bookId]: false}))
   }
 
-  // if (isLoading) {
-  //   return <p>Loading search results...</p>;
-  // }
-
   if (isLoading) {
     return(
       <div className={styles.searchGif}>
-        <img src={searchGif} alt="" />
+        <img src={searchGif} alt="" aria-hidden="true" />
       </div>
     )
   }

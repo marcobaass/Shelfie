@@ -35,7 +35,7 @@ export default function AuthorDetailsPage() {
   if (!author) {
     return(
       <div className={styles.searchGif}>
-        <img src={searchGif} alt="" />
+        <img src={searchGif} alt="" aria-hidden="true"/>
       </div>
     )
   }

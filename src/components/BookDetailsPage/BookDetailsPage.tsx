@@ -72,7 +72,7 @@ console.log(detailedAuthors);
   if (detailsLoading) {
     return(
       <div className={styles.searchGif}>
-        <img src={searchGif} alt="" />
+        <img src={searchGif} alt="" aria-hidden="true" />
       </div>
     )
   }
@@ -113,8 +113,10 @@ console.log(detailedAuthors);
   const filteredSubjects = splitSubjects(detailedBook?.subjects || [], 8)
 
   console.log('detailedBook:', detailedBook);
-console.log('imgLink:', imgLink);
-console.log('isCoverLoaded:', isCoverLoaded);
+  console.log('imgLink:', imgLink);
+  console.log('isCoverLoaded:', isCoverLoaded);
+  console.log("detailedEditions", detailedEditions);
+
 
 
   return (
@@ -231,10 +233,12 @@ console.log('isCoverLoaded:', isCoverLoaded);
       )}
 
       {/* Editions Carousel */}
-      <EditionsCarousel
-        detailedBook={detailedBook}
-        detailedEditions={detailedEditions}
-      />
+      {(detailedEditions && detailedEditions.length > 1) && (
+        <EditionsCarousel
+          detailedBook={detailedBook}
+          detailedEditions={detailedEditions}
+        />
+      )}
     </div>
   )
 }

@@ -100,7 +100,7 @@ button.subjectButton {
   border: none;
   padding: 0;
   font: inherit;
-  color: var(--clr-text);
+  color: var(--clr-dark);
 }
 
 .subjectButton:hover {

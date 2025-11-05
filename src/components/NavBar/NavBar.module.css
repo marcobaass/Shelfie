@@ -65,8 +65,8 @@ span {
   text-decoration: underline;
 }
 
-.hamburgerLink {
-  color: white
+.hamburgerLink h2 {
+  color: white;
 }
 
 .hamburgerLink h2:hover {
@@ -115,10 +115,12 @@ span {
   .hamburgerIconContainer {
     display: block;
     z-index: 10;
+    color: var(--clr-dark);
   }
 
   .hamburgerContainer {
     display: block;
+    color: white;
   }
 
 }

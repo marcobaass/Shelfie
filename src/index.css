@@ -84,20 +84,24 @@ body {
 h1 {
   font-size: var(--fs-7);
   line-height: 1.1;
+  color: var(--clr-dark);
 }
 
 h2 {
   font-size: var(--fs-3);
   font-weight: 400;
+  color: var(--clr-dark);
 }
 
 h3 {
   font-size: var(--fs-1);
   font-weight: 600;
+  color: var(--clr-dark);
 }
 
 h1, h2, h3, h4, h5, h6, p {
   font-family: "Geist";
+  color: var(--clr-dark);
 }
 
 button {

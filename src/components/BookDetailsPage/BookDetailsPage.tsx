@@ -30,7 +30,6 @@ export default function BookDetailsPage() {
   const detailsLoading = useSelector((state: RootState): boolean => state.suggestions.detailsLoading);
   const detailedEditions = useSelector((state: RootState): RawEditionApiDoc[] | null => state.suggestions.detailedEditions);
   const detailedAuthors = useSelector((state: RootState): AuthorApiDoc[] => state.authors.authors)
-console.log(detailedAuthors);
 
   const [isCoverLoaded, setIsCoverLoaded] = useState(false);
 
@@ -39,8 +38,6 @@ console.log(detailedAuthors);
   const [finished, setFinished] = useLocalStorage<Book[]>('finished', []);
 
   const displayBook = detailedBook || selectedSuggestion;
-
-  console.log(detailedBook);
 
   // fetching Bookdetails and Editions
   useEffect(() => {
@@ -65,9 +62,9 @@ console.log(detailedAuthors);
     }
   }, [detailedBook, dispatch])
 
-  // if (detailsLoading) {
-  //   return <p>Loading book details...</p>;
-  // }
+  const workId = passedEdition?.works?.[0]?.key.replace('/works/', '')
+  || (id?.endsWith('M') ? passedWorkId : id)
+  || id;
 
   if (detailsLoading) {
     return(
@@ -77,9 +74,9 @@ console.log(detailedAuthors);
     )
   }
 
-  const isOnWishlist = id ? wishlist.some(book => book.id === id) : false;
-  const isOnReading = id ? reading.some(book => book.id === id) : false;
-  const isOnFinished = id ? finished.some(book => book.id === id) : false;
+  const isOnWishlist = workId ? wishlist.some(book => book.id === workId) : false;
+const isOnReading = workId ? reading.some(book => book.id === workId) : false;
+const isOnFinished = workId ? finished.some(book => book.id === workId) : false;
 
   const imgLink = passedEdition?.covers?.[0]
     ? `https://covers.openlibrary.org/b/id/${passedEdition.covers[0]}-M.jpg`
@@ -96,8 +93,16 @@ console.log(detailedAuthors);
   function handleStatusChange(status: StatusType) {
     if(!id || !displayBook) return;
 
+    let effectiveWorkId = id;
+
+    if (passedEdition?.works && passedEdition.works.length > 0) {
+      effectiveWorkId = passedEdition.works[0].key.replace('/works/', '');
+    } else if (id.endsWith('M') && passedWorkId) {
+      effectiveWorkId = passedWorkId;
+    }
+
     const bookToStore: Book = {
-      id,
+      id: effectiveWorkId,
       title: displayBook.title || 'Unknown Title',
       author_name: displayBook.author_name || selectedSuggestion?.author_name || [],
       cover: displayBook.cover || selectedSuggestion?.cover,
@@ -111,13 +116,6 @@ console.log(detailedAuthors);
   }
 
   const filteredSubjects = splitSubjects(detailedBook?.subjects || [], 8)
-
-  console.log('detailedBook:', detailedBook);
-  console.log('imgLink:', imgLink);
-  console.log('isCoverLoaded:', isCoverLoaded);
-  console.log("detailedEditions", detailedEditions);
-
-
 
   return (
     <div>

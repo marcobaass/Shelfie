@@ -62,16 +62,13 @@ describe('SearchPage Component - Dispatching Actions', () => {
     const button = screen.getByRole('button', { name: /search/i });
     const searchTerm = 'React';
 
-    console.log('[TEST 1] Before user.type');
     await user.type(input, searchTerm);
-    console.log('[TEST 1] After user.type, dispatch calls:', dispatchMock.mock.calls.length);
 
     // Record the number of calls before clicking
     const callsBeforeClick = dispatchMock.mock.calls.length;
 
     await user.click(button);
-    console.log('[TEST 1] After user.click, dispatch calls:', dispatchMock.mock.calls.length);
-    console.log('[TEST 1] All dispatch calls:', dispatchMock.mock.calls);
+
 
     // Wait for any async operations
     await waitFor(() => {
@@ -86,8 +83,6 @@ describe('SearchPage Component - Dispatching Actions', () => {
       call[0]?.type === 'books/fetchBooks/pending'
     );
     expect(booksThunkCalls.length).toBeGreaterThanOrEqual(1);
-
-    console.log('[TEST 1] Assertions passed');
   });
 
   // Test 2: Simplified debounce test without fake timers
@@ -104,18 +99,15 @@ describe('SearchPage Component - Dispatching Actions', () => {
       const input = screen.getByPlaceholderText('Search for books or authors') as HTMLInputElement;
       const searchTerm = 'Redux';
 
-      console.log('[TEST 2] Before user.type');
       await user.type(input, searchTerm);
 
       expect(input.value).toBe(searchTerm);
-      console.log('[TEST 2] After user.type, input.value:', input.value);
 
       // Wait for debounce to complete (using real timers)
       await waitFor(() => {
         expect(mockedFetchSuggestionsThunk).toHaveBeenCalledWith(searchTerm);
       }, { timeout: 1000 }); // Give enough time for debounce
 
-      console.log('[TEST 2] Assertions passed');
     });
 
     // Test debounce behavior - verify it doesn't trigger immediately

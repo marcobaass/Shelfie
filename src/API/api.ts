@@ -113,8 +113,6 @@ export const fetchAuthors = async (authorKeys: string[]): Promise<AuthorApiDoc[]
 export const fetchAuthorWorks = async (authorKey: string, page: number): Promise<AuthorWorksResponse> => {
   try {
     const url = `${API_URL}/authors/${authorKey.replace('/authors/', '')}/works.json?limit=10&offset=${(page - 1) * 10}`;
-    console.log('Fetching URL:', url);  // ← Add this
-    console.log('authorKey:', authorKey);  // ← And this
 
     const response = await axios.get(url);
     return response.data;

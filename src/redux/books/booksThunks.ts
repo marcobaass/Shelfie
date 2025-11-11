@@ -167,7 +167,6 @@ export const fetchAuthorWorksThunk = createAsyncThunk<
   async ({authorKey, page}, { rejectWithValue }) => {
     try {
       const data: AuthorWorksResponse = await fetchAuthorWorks(authorKey, page);
-      console.log('data', data);
 
       return data;
 

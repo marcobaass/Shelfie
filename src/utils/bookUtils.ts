@@ -14,8 +14,6 @@ export function mapRawDocToBook(rawDoc: RawApiDoc): Book | null {
   ? idSourceString.split('/').pop() || ''
   : idSourceString;
 
-  console.log('ID: ',finalId);
-
   if(!finalId) return null
 
   const formattedBook: Book = {
@@ -33,4 +31,3 @@ export function mapRawDocToBook(rawDoc: RawApiDoc): Book | null {
 
 export const getDescription = (desc: string | { value: string } | undefined | null): string =>
   !desc ? 'No synopsis yet' : typeof desc === 'string' ? desc : desc.value ?? 'No synopsis yet';
-

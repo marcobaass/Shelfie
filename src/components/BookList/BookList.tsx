@@ -39,7 +39,6 @@ export default function BookList({
   const [finished, setFinished] = useLocalStorage<Book[]>('finished', []);
 
   function handleStatusChange(book: Book, status: StatusType) {
-    console.log(book.id, book);
 
     if(!book.id || !book) return;
 

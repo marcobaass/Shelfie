@@ -73,13 +73,17 @@
   display: grid;
   justify-items: center;
   position: absolute;
-  color: white;
   background-color: var(--clr-medium);
   padding: 0;
   margin: 0;
   left: 50%;
   transform: translateX(-50%);
   top: var(--gap-3xs)
+}
+
+.suggestions p {
+  color: white;
+
 }
 
 .suggestions > li {
